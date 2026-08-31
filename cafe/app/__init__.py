@@ -28,7 +28,7 @@ def create_app():
     # =========================================================
 
     app.secret_key = config.SECRET_KEY
-    app.permanent_session_lifetime = timedelta(hours=10)
+    app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=10)
 
     # =========================================================
     # SESSION SETTINGS

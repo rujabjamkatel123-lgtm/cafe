@@ -1,0 +1,63 @@
+INSERT IGNORE INTO menu_categories (name, description) VALUES
+    ('Starter', 'Starters and snacks'),
+    ('Main Course', 'Traditional Himalayan main courses'),
+    ('Dessert', 'Traditional Nepalese desserts'),
+    ('Drinks', 'Tea, lassi, and traditional drinks');
+
+INSERT INTO menu_items
+    (name, price, half_plate_price, category_id, description, image, available)
+VALUES
+    ('Veg Steamed Mo:Mo', 250.00, 150.00, (SELECT id FROM menu_categories WHERE name = 'Starter'), 'Steamed vegetable momos.', 'veg-steamed-momo.jpg', 1),
+    ('Chicken Steamed Mo:Mo', 350.00, 210.00, (SELECT id FROM menu_categories WHERE name = 'Starter'), 'Steamed chicken momos.', 'chicken-steamed-momo.jpg', 1),
+    ('Buff Steamed Mo:Mo', 320.00, 190.00, (SELECT id FROM menu_categories WHERE name = 'Starter'), 'Steamed buff momos.', 'buff-steamed-momo.jpg', 1),
+    ('Pork Steamed Mo:Mo', 380.00, 230.00, (SELECT id FROM menu_categories WHERE name = 'Starter'), 'Steamed pork momos.', 'pork-steamed-momo.jpg', 1),
+    ('Veg C-Mo:Mo (Chilli)', 300.00, 180.00, (SELECT id FROM menu_categories WHERE name = 'Starter'), 'Vegetable momos tossed in chilli sauce.', 'veg-c-momo-chilli.jpg', 1),
+    ('Chicken C-Mo:Mo (Chilli)', 400.00, 240.00, (SELECT id FROM menu_categories WHERE name = 'Starter'), 'Chicken momos tossed in chilli sauce.', 'chicken-c-momo-chilli.jpg', 1),
+    ('Buff Jhol Mo:Mo (Soup)', 360.00, 220.00, (SELECT id FROM menu_categories WHERE name = 'Starter'), 'Buff momos served in a spiced soup.', 'buff-jhol-momo.jpg', 1),
+    ('Chicken Choila (Spiced Grilled Chicken)', 450.00, 270.00, (SELECT id FROM menu_categories WHERE name = 'Starter'), 'Spiced grilled chicken prepared Nepalese style.', 'chicken-choila.jpg', 1),
+    ('Buff Choila (Spiced Grilled Water Buffalo)', 420.00, 250.00, (SELECT id FROM menu_categories WHERE name = 'Starter'), 'Spiced grilled water buffalo prepared Nepalese style.', 'buff-choila.jpg', 1),
+    ('Duck Choila (Spiced Grilled Duck)', 550.00, 330.00, (SELECT id FROM menu_categories WHERE name = 'Starter'), 'Spiced grilled duck prepared Nepalese style.', 'duck-choila.jpg', 1),
+    ('Sukuti Sadeko (Spiced Dried Meat)', 480.00, 300.00, (SELECT id FROM menu_categories WHERE name = 'Starter'), 'Spiced dried meat salad.', 'sukuti-sadeko.jpg', 1),
+    ('Aloo Sadeko (Spiced Potato Salad)', 220.00, 140.00, (SELECT id FROM menu_categories WHERE name = 'Starter'), 'Spiced Nepalese potato salad.', 'aloo-sadeko.jpg', 1),
+    ('Bhatmas Sadeko (Spiced Toasted Soybeans)', 180.00, 120.00, (SELECT id FROM menu_categories WHERE name = 'Starter'), 'Spiced toasted soybean snack.', 'bhatmas-sadeko.jpg', 1),
+    ('Peanut Sadeko (Spiced Peanuts)', 200.00, 130.00, (SELECT id FROM menu_categories WHERE name = 'Starter'), 'Spiced peanut salad.', 'peanut-sadeko.jpg', 1),
+    ('Gundruk Sadeko (Fermented Leafy Greens)', 190.00, 120.00, (SELECT id FROM menu_categories WHERE name = 'Starter'), 'Fermented leafy greens with Nepalese spices.', 'gundruk-sadeko.jpg', 1),
+    ('Veg Chatpate (Spiced Puffed Rice Mix)', 150.00, 100.00, (SELECT id FROM menu_categories WHERE name = 'Starter'), 'Spiced puffed rice and vegetable mix.', 'veg-chatpate.jpg', 1),
+    ('Panipuri (Stuffed Crispy Puris)', 120.00, 80.00, (SELECT id FROM menu_categories WHERE name = 'Starter'), 'Crispy puris filled with spiced water and filling.', 'panipuri.jpg', 1),
+    ('Veg Chowmein (Stir-Fried Noodles)', 220.00, 150.00, (SELECT id FROM menu_categories WHERE name = 'Starter'), 'Stir-fried noodles with vegetables.', 'veg-chowmein.jpg', 1),
+    ('Chicken Chowmein (Stir-Fried Noodles)', 320.00, 220.00, (SELECT id FROM menu_categories WHERE name = 'Starter'), 'Stir-fried noodles with chicken.', 'chicken-chowmein.jpg', 1),
+    ('Buff Thukpa (Noodle Soup)', 280.00, 180.00, (SELECT id FROM menu_categories WHERE name = 'Starter'), 'Warm noodle soup with buff.', 'buff-thukpa.jpg', 1),
+    ('Veg Pakoda (Deep-Fried Fritters)', 180.00, 120.00, (SELECT id FROM menu_categories WHERE name = 'Starter'), 'Crispy deep-fried vegetable fritters.', 'veg-pakoda.jpg', 1),
+    ('Paneer Tikka (Grilled Cottage Cheese)', 420.00, 250.00, (SELECT id FROM menu_categories WHERE name = 'Starter'), 'Grilled cottage cheese with spices.', 'paneer-tikka.jpg', 1),
+    ('Chicken Sekuwa (Traditional Skewered Meat)', 460.00, 280.00, (SELECT id FROM menu_categories WHERE name = 'Starter'), 'Traditional Nepalese grilled chicken skewers.', 'chicken-sekuwa.jpg', 1),
+    ('Pork Sekuwa (Traditional Skewered Meat)', 490.00, 300.00, (SELECT id FROM menu_categories WHERE name = 'Starter'), 'Traditional Nepalese grilled pork skewers.', 'pork-sekuwa.jpg', 1),
+    ('Mutton Sekuwa (Traditional Skewered Meat)', 590.00, 360.00, (SELECT id FROM menu_categories WHERE name = 'Starter'), 'Traditional Nepalese grilled mutton skewers.', 'mutton-sekuwa.jpg', 1),
+
+    ('Authentic Veg Thakali Thali Set', 450.00, 280.00, (SELECT id FROM menu_categories WHERE name = 'Main Course'), 'Traditional vegetarian Thakali thali set.', 'authentic-veg-thakali-thali-set.jpg', 1),
+    ('Chicken Thakali Thali Set', 550.00, 340.00, (SELECT id FROM menu_categories WHERE name = 'Main Course'), 'Traditional chicken Thakali thali set.', 'chicken-thakali-thali-set.jpg', 1),
+    ('Buff Thakali Thali Set', 520.00, 320.00, (SELECT id FROM menu_categories WHERE name = 'Main Course'), 'Traditional buff Thakali thali set.', 'buff-thakali-thali-set.jpg', 1),
+    ('Mutton Thakali Thali Set', 680.00, 420.00, (SELECT id FROM menu_categories WHERE name = 'Main Course'), 'Traditional mutton Thakali thali set.', 'mutton-thakali-thali-set.jpg', 1),
+    ('Fish Thakali Thali Set', 580.00, 360.00, (SELECT id FROM menu_categories WHERE name = 'Main Course'), 'Traditional fish Thakali thali set.', 'fish-thakali-thali-set.jpg', 1),
+    ('Veg Dhindo Set (Millet Porridge)', 500.00, 300.00, (SELECT id FROM menu_categories WHERE name = 'Main Course'), 'Traditional millet porridge set with vegetables.', 'veg-dhindo-set.jpg', 1),
+    ('Chicken Dhindo Set (Millet Porridge)', 620.00, 380.00, (SELECT id FROM menu_categories WHERE name = 'Main Course'), 'Traditional millet porridge set with chicken.', 'chicken-dhindo-set.jpg', 1),
+    ('Mutton Dhindo Set (Millet Porridge)', 750.00, 460.00, (SELECT id FROM menu_categories WHERE name = 'Main Course'), 'Traditional millet porridge set with mutton.', 'mutton-dhindo-set.jpg', 1),
+    ('Khukurako Masu (Local Chicken Curry)', 380.00, 230.00, (SELECT id FROM menu_categories WHERE name = 'Main Course'), 'Local chicken curry with Himalayan spices.', 'khukurako-masu.jpg', 1),
+    ('Khasiko Masu (Local Mutton Curry)', 480.00, 300.00, (SELECT id FROM menu_categories WHERE name = 'Main Course'), 'Local mutton curry with Himalayan spices.', 'khasiko-masu.jpg', 1),
+    ('Aloo Tama Bodi (Potato, Bamboo Shoot, Black-Eyed Peas)', 260.00, 180.00, (SELECT id FROM menu_categories WHERE name = 'Main Course'), 'Potato, bamboo shoot, and black-eyed pea curry.', 'aloo-tama-bodi.jpg', 1),
+    ('Kwati Soup (Sprouted Mixed Bean Soup)', 240.00, 160.00, (SELECT id FROM menu_categories WHERE name = 'Main Course'), 'Traditional sprouted mixed bean soup.', 'kwati-soup.jpg', 1),
+    ('Plain Basmati Rice', 120.00, 80.00, (SELECT id FROM menu_categories WHERE name = 'Main Course'), 'Steamed plain basmati rice.', 'plain-basmati-rice.jpg', 1),
+    ('Sadha Jethobuda Rice', 150.00, 100.00, (SELECT id FROM menu_categories WHERE name = 'Main Course'), 'Traditional Jethobuda rice.', 'sadha-jethobuda-rice.jpg', 1),
+
+    ('Juju Dhau (Bhaktapur King Curd)', 150.00, NULL, (SELECT id FROM menu_categories WHERE name = 'Dessert'), 'Traditional Bhaktapur king curd.', 'juju-dhau.jpg', 1),
+    ('Lalmohan (Gulab Jamun - 2 Pcs)', 120.00, NULL, (SELECT id FROM menu_categories WHERE name = 'Dessert'), 'Two pieces of soft gulab jamun.', 'lalmohan.jpg', 1),
+    ('Rasbari (Rasgulla - 2 Pcs)', 120.00, NULL, (SELECT id FROM menu_categories WHERE name = 'Dessert'), 'Two pieces of rasgulla.', 'rasbari.jpg', 1),
+    ('Kheer (Traditional Rice Pudding)', 220.00, NULL, (SELECT id FROM menu_categories WHERE name = 'Dessert'), 'Traditional Nepalese rice pudding.', 'kheer.jpg', 1),
+    ('Shikarni (Spiced Sweet Thick Yogurt)', 180.00, NULL, (SELECT id FROM menu_categories WHERE name = 'Dessert'), 'Sweet thick yogurt with spices.', 'shikarni.jpg', 1),
+    ('Malpuwa with Rabri', 250.00, NULL, (SELECT id FROM menu_categories WHERE name = 'Dessert'), 'Sweet malpuwa served with rabri.', 'malpuwa-with-rabri.jpg', 1),
+
+    ('Sweet Lassi (Yogurt Drink)', 160.00, NULL, (SELECT id FROM menu_categories WHERE name = 'Drinks'), 'Sweet yogurt-based lassi.', 'sweet-lassi.jpg', 1),
+    ('Mango Lassi (Yogurt Drink)', 200.00, NULL, (SELECT id FROM menu_categories WHERE name = 'Drinks'), 'Mango yogurt-based lassi.', 'mango-lassi.jpg', 1),
+    ('Mohi (Traditional Spiced Buttermilk)', 100.00, NULL, (SELECT id FROM menu_categories WHERE name = 'Drinks'), 'Traditional spiced buttermilk.', 'mohi.jpg', 1),
+    ('Masala Chiya (Spiced Milk Tea)', 80.00, NULL, (SELECT id FROM menu_categories WHERE name = 'Drinks'), 'Spiced milk tea.', 'masala-chiya.jpg', 1),
+    ('Hot Lemon with Honey', 120.00, NULL, (SELECT id FROM menu_categories WHERE name = 'Drinks'), 'Hot lemon drink sweetened with honey.', 'hot-lemon-with-honey.jpg', 1);
+    
