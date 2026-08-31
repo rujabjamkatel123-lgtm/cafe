@@ -698,6 +698,7 @@
             }
 
             const orderStatusUrl = "{{ url_for('customer.order_status') }}";
+            const customerLoginUrl = "{{ url_for('auth.login') }}";
             const trackedOrderStatuses = new Map();
             const statusMessages = {
                 pending: 'Your order has been received.',
@@ -715,6 +716,16 @@
             });
 
             function updateCustomerOrderStatuses(payload) {
+                const tableStatus = String(payload.table_status || '').toLowerCase();
+                const hadPreviousOrders = trackedOrderStatuses.size > 0;
+
+                // Reception cleared this table. Leave immediately so the next
+                // customer cannot see the previous table session or its orders.
+                if (tableStatus === 'available' && hadPreviousOrders) {
+                    window.location.replace(customerLoginUrl);
+                    return;
+                }
+
                 (payload.orders || []).forEach(function (order) {
                     const orderId = String(order.id);
                     const nextStatus = String(order.status || '').toLowerCase();
@@ -782,4 +793,3 @@
         }());
     </script>
 {% endblock %}
-
