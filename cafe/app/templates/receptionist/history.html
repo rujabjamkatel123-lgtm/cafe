@@ -1,0 +1,1020 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Receptionist History · Himalayan Bites
+{% endblock %}
+
+{% macro icon(name, size=20) %}
+    {% if name == 'menu' %}
+        <svg width="{{ size }}" height="{{ size }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+    {% elif name == 'history' %}
+        <svg width="{{ size }}" height="{{ size }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.5" />
+            <path d="M4 4v4.5h4.5M12 7v5l3 2" />
+        </svg>
+    {% elif name == 'search' %}
+        <svg width="{{ size }}" height="{{ size }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="6.5" />
+            <path d="m16 16 4 4" />
+        </svg>
+    {% elif name == 'orders' %}
+        <svg width="{{ size }}" height="{{ size }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 3h12v18H6z" />
+            <path d="M9 8h6M9 12h6M9 16h4" />
+        </svg>
+    {% elif name == 'sales' %}
+        <svg width="{{ size }}" height="{{ size }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <path d="M12 3v18" />
+            <path d="M17 7c0-2-2-3-5-3S7 5 7 7s2 3 5 3 5 1 5 3-2 3-5 3-5-1-5-3" />
+        </svg>
+    {% elif name == 'close' %}
+        <svg width="{{ size }}" height="{{ size }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <path d="m6 6 12 12M18 6 6 18" />
+        </svg>
+    {% else %}
+        <svg width="{{ size }}" height="{{ size }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="8.5" />
+        </svg>
+    {% endif %}
+{% endmacro %}
+
+{% block content %}
+    {% set reception_page = 'history' %}
+    {% set reception_sidebar_id = 'receptionHistorySidebar' %}
+    {% set reception_sidebar_class = 'reception-history-sidebar' %}
+
+    <div class="reception-history-view" id="receptionHistoryApp">
+        {% include "partials/receptionist_sidebar.html" %}
+
+        <main class="reception-history-main">
+            <header class="reception-history-topbar">
+                <div class="reception-history-heading">
+                    <button
+                        class="reception-history-menu-toggle"
+                        id="sidebarOpen"
+                        type="button"
+                        aria-label="Open receptionist navigation"
+                    >
+                        {{ icon('menu', 21) }}
+                    </button>
+                    <div>
+                        <span>Front-of-house archive</span>
+                        <h1>Order history</h1>
+                    </div>
+                </div>
+                <div class="reception-history-profile">
+                    <span>R</span>
+                    <strong>Receptionist</strong>
+                </div>
+            </header>
+
+            <div class="reception-history-content">
+                <section class="reception-history-hero">
+                    <div>
+                        <span class="reception-history-kicker">
+                            {{ icon('history', 15) }}
+                            Completed service records
+                        </span>
+                        <h2>Keep the whole service story in view.</h2>
+                        <p>
+                            Review finished, served, and cancelled orders with their table context,
+                            value, and item-level details.
+                        </p>
+                    </div>
+                    <a href="{{ url_for('receptionist.orders') }}">
+                        Open live queue
+                        <span aria-hidden="true">→</span>
+                    </a>
+                </section>
+
+                {% set history_totals = namespace(total=0, revenue=0, served=0, cancelled=0) %}
+                {% for order in orders %}
+                    {% set history_totals.total = history_totals.total + 1 %}
+                    {% set history_totals.revenue = history_totals.revenue + (order.total_amount | float) %}
+                    {% if order.status in ['served', 'cleared'] %}
+                        {% set history_totals.served = history_totals.served + 1 %}
+                    {% endif %}
+                    {% if order.status in ['cancelled', 'canceled'] %}
+                        {% set history_totals.cancelled = history_totals.cancelled + 1 %}
+                    {% endif %}
+                {% endfor %}
+
+                <section class="reception-history-stats" aria-label="History summary">
+                    <article>
+                        <span class="reception-history-stat-icon">{{ icon('orders', 18) }}</span>
+                        <div>
+                            <span>Finished orders</span>
+                            <strong>{{ history_totals.total }}</strong>
+                            <small>Archive records</small>
+                        </div>
+                    </article>
+                    <article>
+                        <span class="reception-history-stat-icon">{{ icon('sales', 18) }}</span>
+                        <div>
+                            <span>Historical value</span>
+                            <strong>Rs. {{ "%.2f" | format(history_totals.revenue) }}</strong>
+                            <small>Total order amounts</small>
+                        </div>
+                    </article>
+                    <article>
+                        <span class="reception-history-stat-icon">{{ icon('history', 18) }}</span>
+                        <div>
+                            <span>Served or cleared</span>
+                            <strong>{{ history_totals.served }}</strong>
+                            <small>Completed service</small>
+                        </div>
+                    </article>
+                    <article>
+                        <span class="reception-history-stat-icon">{{ icon('close', 18) }}</span>
+                        <div>
+                            <span>Cancelled</span>
+                            <strong>{{ history_totals.cancelled }}</strong>
+                            <small>Retained records</small>
+                        </div>
+                    </article>
+                </section>
+
+                <section class="reception-history-panel" aria-labelledby="reception-history-title">
+                    <div class="reception-history-panel-header">
+                        <div>
+                            <span class="reception-history-kicker">Service archive</span>
+                            <h2 id="reception-history-title">Previous orders</h2>
+                            <p>Search an order number, table, or status.</p>
+                        </div>
+                        <label class="reception-history-search">
+                            <span class="sr-only">Search order history</span>
+                            {{ icon('search', 17) }}
+                            <input id="receptionHistorySearch" type="search" placeholder="Search archive" autocomplete="off">
+                        </label>
+                    </div>
+
+                    <div class="reception-history-list" id="receptionHistoryList">
+                        {% for order in orders %}
+                            {% set status = (order.status or 'served') | lower %}
+                            <article
+                                class="reception-history-card"
+                                data-history-card
+                                data-history-search="{{ order.id }} {{ order.order_number or '' }} {{ order.table_name or ('Table ' ~ order.table_id) }} {{ status }}"
+                            >
+                                <div class="reception-history-card-top">
+                                    <div class="reception-history-order-id">
+                                        <span>#{{ order.order_number or order.id }}</span>
+                                        <div>
+                                            <small>{{ order.table_name or ('Table ' ~ order.table_id) }}</small>
+                                            <h3>Order #{{ order.order_number or order.id }}</h3>
+                                        </div>
+                                    </div>
+                                    {% if status in ['served', 'cleared', 'completed'] %}
+                                        <span class="reception-status reception-status-complete">Completed</span>
+                                    {% elif status in ['cancelled', 'canceled'] %}
+                                        <span class="reception-status reception-status-cancelled">Cancelled</span>
+                                    {% else %}
+                                        <span class="reception-status">{{ order.status | default('Served', true) | capitalize }}</span>
+                                    {% endif %}
+                                </div>
+
+                                <div class="reception-history-card-meta">
+                                    <span>{{ order.created_at }}</span>
+                                    <span>{{ order.items | length }} item(s)</span>
+                                    <strong>Rs. {{ "%.2f" | format(order.total_amount | float) }}</strong>
+                                </div>
+
+                                <div class="reception-history-card-footer">
+                                    <span>{{ order.table_name or ('Table ' ~ order.table_id) }}</span>
+                                    <button
+                                        type="button"
+                                        data-open-reception-order
+                                        data-order-id="{{ order.id }}"
+                                        data-order-title="Order #{{ order.order_number or order.id }}"
+                                        data-order-table="{{ order.table_name or ('Table ' ~ order.table_id) }}"
+                                        data-order-date="{{ order.created_at }}"
+                                        data-order-total="Rs. {{ "%.2f" | format(order.total_amount | float) }}"
+                                    >
+                                        View details
+                                        <span aria-hidden="true">→</span>
+                                    </button>
+                                </div>
+                            </article>
+                        {% else %}
+                            <div class="reception-history-empty">
+                                <span>{{ icon('history', 26) }}</span>
+                                <h3>No finished orders yet</h3>
+                                <p>Completed service records will appear here.</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <p class="reception-history-no-results" id="receptionHistoryNoResults" hidden>No orders match your search.</p>
+                </section>
+
+                <footer class="reception-history-footer">
+                    Himalayan Bites <span>•</span> Receptionist order archive
+                </footer>
+            </div>
+        </main>
+
+        <div class="reception-mobile-overlay" id="mobileOverlay"></div>
+    </div>
+
+    <div class="reception-order-modal-backdrop" id="receptionOrderModal" hidden>
+        <section class="reception-order-modal" role="dialog" aria-modal="true" aria-labelledby="receptionModalTitle">
+            <div class="reception-order-modal-header">
+                <div>
+                    <span class="reception-history-kicker">Order details</span>
+                    <h2 id="receptionModalTitle">Order</h2>
+                    <p id="receptionModalMeta"></p>
+                </div>
+                <button type="button" data-close-reception-order aria-label="Close order details">
+                    {{ icon('close', 19) }}
+                </button>
+            </div>
+            <div class="reception-order-items" id="receptionModalItems"></div>
+            <div class="reception-order-total">
+                <span>Total order value</span>
+                <strong id="receptionModalTotal">Rs. 0.00</strong>
+            </div>
+        </section>
+    </div>
+
+    <script type="application/json" id="order-data">{{ order_history_json | default('[]', true) | safe }}</script>
+{% endblock %}
+
+{% block extra_css %}
+    <style>
+        .reception-history-view {
+            --reception-ink: #28231f;
+            --reception-muted: #766d63;
+            --reception-bg: #f4efe8;
+            --reception-surface: #fffdf8;
+            --reception-warm: #fbf5ec;
+            --reception-border: #e5d9ca;
+            --reception-accent: #c9653e;
+            --reception-accent-dark: #a94f30;
+            --reception-sage: #6d8b73;
+            min-height: 100vh;
+            background: var(--reception-bg);
+            color: var(--reception-ink);
+        }
+
+        .reception-history-main {
+            min-height: 100vh;
+            margin-left: 258px;
+        }
+
+        .reception-history-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            display: flex;
+            min-height: 82px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 16px clamp(24px, 4vw, 58px);
+            border-bottom: 1px solid var(--reception-border);
+            background: rgba(255, 253, 248, .94);
+            backdrop-filter: blur(14px);
+        }
+
+        .reception-history-heading,
+        .reception-history-profile,
+        .reception-history-panel-header,
+        .reception-history-card-top,
+        .reception-history-card-meta,
+        .reception-history-card-footer,
+        .reception-history-order-id,
+        .reception-history-search,
+        .reception-order-modal-header,
+        .reception-order-total {
+            display: flex;
+            align-items: center;
+        }
+
+        .reception-history-heading {
+            gap: 13px;
+        }
+
+        .reception-history-heading span,
+        .reception-history-kicker {
+            color: var(--reception-accent);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+        }
+
+        .reception-history-heading h1,
+        .reception-history-hero h2,
+        .reception-history-panel h2,
+        .reception-order-modal h2 {
+            margin: 0;
+            font-family: 'Playfair Display SC', Georgia, serif;
+        }
+
+        .reception-history-heading h1 {
+            margin-top: 5px;
+            color: var(--reception-ink);
+            font-size: 21px;
+        }
+
+        .reception-history-menu-toggle,
+        .reception-order-modal-header button {
+            display: inline-flex;
+            min-width: 44px;
+            min-height: 44px;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--reception-border);
+            border-radius: 11px;
+            background: var(--reception-surface);
+            color: var(--reception-ink);
+            cursor: pointer;
+        }
+
+        .reception-history-menu-toggle {
+            display: none;
+        }
+
+        .reception-history-profile {
+            gap: 9px;
+            padding-left: 16px;
+            border-left: 1px solid var(--reception-border);
+        }
+
+        .reception-history-profile > span {
+            display: inline-flex;
+            width: 40px;
+            height: 40px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--reception-sage);
+            color: #fffaf2;
+            font-weight: 800;
+        }
+
+        .reception-history-profile strong {
+            color: var(--reception-ink);
+            font-size: 12px;
+        }
+
+        .reception-history-content {
+            width: min(1360px, calc(100% - 48px));
+            margin: 0 auto;
+            padding: 34px 0 56px;
+        }
+
+        .reception-history-hero {
+            display: flex;
+            min-height: 190px;
+            align-items: end;
+            justify-content: space-between;
+            gap: 28px;
+            margin-bottom: 18px;
+            padding: 30px clamp(24px, 4vw, 44px);
+            border-radius: 20px;
+            background: #252a25;
+            color: #fffaf2;
+            box-shadow: 0 18px 40px rgba(67, 48, 33, .14);
+        }
+
+        .reception-history-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .reception-history-hero .reception-history-kicker {
+            color: #f7d7c7;
+        }
+
+        .reception-history-hero h2 {
+            max-width: 710px;
+            margin-top: 11px;
+            color: #fffaf2;
+            font-size: clamp(28px, 4vw, 44px);
+            line-height: 1.06;
+        }
+
+        .reception-history-hero p {
+            max-width: 650px;
+            margin: 10px 0 0;
+            color: rgba(255, 250, 242, .70);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .reception-history-hero > a {
+            display: inline-flex;
+            min-height: 44px;
+            align-items: center;
+            gap: 7px;
+            flex: 0 0 auto;
+            padding: 0 15px;
+            border: 1px solid rgba(255, 250, 242, .20);
+            border-radius: 11px;
+            color: #fffaf2;
+            font-size: 11px;
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .reception-history-hero > a:hover {
+            background: rgba(255, 250, 242, .10);
+        }
+
+        .reception-history-stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .reception-history-stats article {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 17px;
+            border: 1px solid var(--reception-border);
+            border-radius: 15px;
+            background: var(--reception-surface);
+            box-shadow: 0 10px 22px rgba(67, 48, 33, .05);
+        }
+
+        .reception-history-stat-icon {
+            display: inline-flex;
+            width: 40px;
+            height: 40px;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+            border-radius: 11px;
+            background: var(--reception-warm);
+            color: var(--reception-accent);
+        }
+
+        .reception-history-stats article div {
+            display: grid;
+            min-width: 0;
+            gap: 4px;
+        }
+
+        .reception-history-stats article div > span,
+        .reception-history-stats small {
+            color: var(--reception-muted);
+            font-size: 10px;
+        }
+
+        .reception-history-stats strong {
+            overflow: hidden;
+            color: var(--reception-ink);
+            font-family: 'Playfair Display SC', Georgia, serif;
+            font-size: 22px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .reception-history-panel {
+            padding: 21px;
+            border: 1px solid var(--reception-border);
+            border-radius: 17px;
+            background: var(--reception-surface);
+            box-shadow: 0 12px 28px rgba(67, 48, 33, .06);
+        }
+
+        .reception-history-panel-header {
+            align-items: end;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 18px;
+        }
+
+        .reception-history-panel h2 {
+            margin-top: 6px;
+            color: var(--reception-ink);
+            font-size: 25px;
+        }
+
+        .reception-history-panel-header p {
+            margin: 5px 0 0;
+            color: var(--reception-muted);
+            font-size: 11px;
+        }
+
+        .reception-history-search {
+            width: min(100%, 260px);
+            gap: 8px;
+            padding: 0 11px;
+            border: 1px solid var(--reception-border);
+            border-radius: 10px;
+            color: var(--reception-muted);
+        }
+
+        .reception-history-search:focus-within {
+            border-color: var(--reception-accent);
+            box-shadow: 0 0 0 3px rgba(201, 101, 62, .14);
+        }
+
+        .reception-history-search input {
+            width: 100%;
+            min-height: 40px;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: var(--reception-ink);
+            font: inherit;
+            font-size: 11px;
+            outline: 0;
+        }
+
+        .reception-history-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .reception-history-card {
+            padding: 17px;
+            border: 1px solid var(--reception-border);
+            border-radius: 14px;
+            background: var(--reception-warm);
+            transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+        }
+
+        .reception-history-card:hover {
+            border-color: rgba(201, 101, 62, .46);
+            box-shadow: 0 12px 24px rgba(67, 48, 33, .08);
+            transform: translateY(-1px);
+        }
+
+        .reception-history-card-top,
+        .reception-history-card-meta,
+        .reception-history-card-footer {
+            justify-content: space-between;
+            gap: 14px;
+        }
+
+        .reception-history-order-id {
+            min-width: 0;
+            gap: 11px;
+        }
+
+        .reception-history-order-id > span {
+            display: inline-flex;
+            width: 40px;
+            height: 40px;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+            border-radius: 11px;
+            background: #252a25;
+            color: #fffaf2;
+            font-family: 'Playfair Display SC', Georgia, serif;
+            font-size: 12px;
+        }
+
+        .reception-history-order-id div {
+            min-width: 0;
+        }
+
+        .reception-history-order-id small {
+            color: var(--reception-accent);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+
+        .reception-history-order-id h3 {
+            margin: 4px 0 0;
+            color: var(--reception-ink);
+            font-family: 'Playfair Display SC', Georgia, serif;
+            font-size: 17px;
+        }
+
+        .reception-status {
+            min-height: 28px;
+            padding: 6px 10px;
+            border: 1px solid currentColor;
+            border-radius: 999px;
+            color: #986a23;
+            background: #fff5dc;
+            font-size: 10px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .reception-status-complete {
+            color: #52735b;
+            background: #edf5ed;
+        }
+
+        .reception-status-cancelled {
+            color: #9d4c47;
+            background: #fcedeb;
+        }
+
+        .reception-history-card-meta {
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 1px solid var(--reception-border);
+            color: var(--reception-muted);
+            font-size: 10px;
+        }
+
+        .reception-history-card-meta strong {
+            color: var(--reception-accent);
+            font-family: 'Playfair Display SC', Georgia, serif;
+            font-size: 16px;
+        }
+
+        .reception-history-card-footer {
+            margin-top: 13px;
+            color: var(--reception-muted);
+            font-size: 10px;
+        }
+
+        .reception-history-card-footer button {
+            display: inline-flex;
+            min-height: 36px;
+            align-items: center;
+            gap: 7px;
+            padding: 0 10px;
+            border: 1px solid var(--reception-border);
+            border-radius: 10px;
+            background: var(--reception-surface);
+            color: var(--reception-accent);
+            font: inherit;
+            font-size: 10px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .reception-history-card-footer button:hover {
+            border-color: var(--reception-accent);
+        }
+
+        .reception-history-empty {
+            padding: 52px 20px;
+            border: 1px dashed var(--reception-border);
+            border-radius: 14px;
+            color: var(--reception-muted);
+            text-align: center;
+        }
+
+        .reception-history-empty > span {
+            display: inline-flex;
+            width: 48px;
+            height: 48px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            background: var(--reception-warm);
+            color: var(--reception-accent);
+        }
+
+        .reception-history-empty h3 {
+            margin: 13px 0 4px;
+            color: var(--reception-ink);
+            font-family: 'Playfair Display SC', Georgia, serif;
+            font-size: 18px;
+        }
+
+        .reception-history-empty p,
+        .reception-history-no-results {
+            margin: 0;
+            font-size: 11px;
+        }
+
+        .reception-history-no-results {
+            margin-top: 14px;
+            color: var(--reception-muted);
+            text-align: center;
+        }
+
+        .reception-history-footer {
+            padding: 22px 0 0;
+            color: var(--reception-muted);
+            font-size: 10px;
+            letter-spacing: .12em;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .reception-history-footer span {
+            margin: 0 8px;
+            color: var(--reception-accent);
+        }
+
+        .reception-mobile-overlay {
+            display: none;
+        }
+
+        .reception-order-modal-backdrop {
+            position: fixed;
+            z-index: 100;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            padding: 20px;
+            background: rgba(37, 31, 25, .54);
+        }
+
+        .reception-order-modal-backdrop[hidden] {
+            display: none;
+        }
+
+        .reception-order-modal {
+            width: min(100%, 560px);
+            max-height: min(80vh, 680px);
+            overflow: auto;
+            padding: 22px;
+            border: 1px solid var(--reception-border);
+            border-radius: 18px;
+            background: var(--reception-surface);
+            box-shadow: 0 24px 60px rgba(37, 31, 25, .24);
+        }
+
+        .reception-order-modal-header {
+            align-items: start;
+            justify-content: space-between;
+            gap: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--reception-border);
+        }
+
+        .reception-order-modal h2 {
+            margin-top: 6px;
+            color: var(--reception-ink);
+            font-size: 24px;
+        }
+
+        .reception-order-modal-header p {
+            margin: 5px 0 0;
+            color: var(--reception-muted);
+            font-size: 11px;
+        }
+
+        .reception-order-items {
+            display: grid;
+            gap: 0;
+            padding: 8px 0;
+        }
+
+        .reception-order-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 13px 0;
+            border-bottom: 1px solid var(--reception-border);
+        }
+
+        .reception-order-item span {
+            display: grid;
+            gap: 4px;
+        }
+
+        .reception-order-item strong {
+            color: var(--reception-ink);
+            font-size: 12px;
+        }
+
+        .reception-order-item small {
+            color: var(--reception-muted);
+            font-size: 10px;
+        }
+
+        .reception-order-item b,
+        .reception-order-total strong {
+            color: var(--reception-accent);
+            font-family: 'Playfair Display SC', Georgia, serif;
+        }
+
+        .reception-order-total {
+            justify-content: space-between;
+            gap: 12px;
+            padding-top: 14px;
+            color: var(--reception-muted);
+            font-size: 11px;
+        }
+
+        .reception-order-total strong {
+            font-size: 18px;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        @media (max-width: 900px) {
+            .reception-history-main {
+                margin-left: 0;
+            }
+
+            .reception-history-menu-toggle {
+                display: inline-flex;
+            }
+
+            .reception-mobile-overlay.is-visible {
+                position: fixed;
+                z-index: 60;
+                inset: 0;
+                display: block;
+                background: rgba(37, 31, 25, .54);
+            }
+
+            .reception-history-content {
+                width: min(calc(100% - 32px), 760px);
+            }
+
+            .reception-history-hero,
+            .reception-history-panel-header {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .reception-history-hero > a,
+            .reception-history-search {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 680px) {
+            .reception-history-topbar {
+                padding: 13px 16px;
+            }
+
+            .reception-history-profile {
+                padding-left: 0;
+                border-left: 0;
+            }
+
+            .reception-history-profile strong {
+                display: none;
+            }
+
+            .reception-history-content {
+                padding-top: 20px;
+            }
+
+            .reception-history-stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .reception-history-panel {
+                padding: 16px;
+            }
+
+            .reception-history-card-top,
+            .reception-history-card-meta,
+            .reception-history-card-footer {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 430px) {
+            .reception-history-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .reception-history-card,
+            .reception-history-hero > a,
+            .reception-history-card-footer button {
+                transition: none;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        (function () {
+            const sidebar = document.getElementById('{{ reception_sidebar_id }}');
+            const overlay = document.getElementById('mobileOverlay');
+            const openButton = document.getElementById('sidebarOpen');
+            const closeButton = document.getElementById('sidebarClose');
+            const searchInput = document.getElementById('receptionHistorySearch');
+            const noResults = document.getElementById('receptionHistoryNoResults');
+            const cards = Array.from(document.querySelectorAll('[data-history-card]'));
+            const modal = document.getElementById('receptionOrderModal');
+            const modalTitle = document.getElementById('receptionModalTitle');
+            const modalMeta = document.getElementById('receptionModalMeta');
+            const modalItems = document.getElementById('receptionModalItems');
+            const modalTotal = document.getElementById('receptionModalTotal');
+            const orderData = JSON.parse(document.getElementById('order-data')?.textContent || '[]');
+
+            function setSidebar(open) {
+                if (!sidebar || !overlay) {
+                    return;
+                }
+                sidebar.classList.toggle('is-open', open);
+                overlay.classList.toggle('is-visible', open);
+                document.body.classList.toggle('drawer-open', open);
+            }
+
+            function filterHistory() {
+                const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+                let visible = 0;
+                cards.forEach(function (card) {
+                    const matches = !query || card.dataset.historySearch.toLowerCase().includes(query);
+                    card.hidden = !matches;
+                    if (matches) {
+                        visible += 1;
+                    }
+                });
+                if (noResults) {
+                    noResults.hidden = visible !== 0 || cards.length === 0;
+                }
+            }
+
+            function closeOrder() {
+                if (!modal) {
+                    return;
+                }
+                modal.hidden = true;
+                document.body.classList.remove('modal-open');
+            }
+
+            function openOrder(button) {
+                const order = orderData.find(function (item) {
+                    return String(item.id) === String(button.dataset.orderId);
+                });
+                if (!order || !modal) {
+                    return;
+                }
+                modalTitle.textContent = button.dataset.orderTitle || 'Order details';
+                modalMeta.textContent = [button.dataset.orderTable, button.dataset.orderDate].filter(Boolean).join(' · ');
+                modalTotal.textContent = button.dataset.orderTotal || 'Rs. 0.00';
+                modalItems.innerHTML = (order.items || []).map(function (item) {
+                    return '<div class="reception-order-item">' +
+                        '<span><strong>' + (item.name || 'Item') + '</strong>' +
+                        '<small>' + item.quantity + ' × item</small></span>' +
+                        '<b>Rs. ' + Number(item.subtotal || 0).toFixed(2) + '</b></div>';
+                }).join('');
+                modal.hidden = false;
+                document.body.classList.add('modal-open');
+                const close = modal.querySelector('[data-close-reception-order]');
+                if (close) {
+                    close.focus();
+                }
+            }
+
+            if (openButton) {
+                openButton.addEventListener('click', function () {
+                    setSidebar(true);
+                });
+            }
+            if (closeButton) {
+                closeButton.addEventListener('click', function () {
+                    setSidebar(false);
+                });
+            }
+            if (overlay) {
+                overlay.addEventListener('click', function () {
+                    setSidebar(false);
+                });
+            }
+            if (searchInput) {
+                searchInput.addEventListener('input', filterHistory);
+            }
+            document.querySelectorAll('[data-open-reception-order]').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    openOrder(button);
+                });
+            });
+            document.querySelectorAll('[data-close-reception-order]').forEach(function (button) {
+                button.addEventListener('click', closeOrder);
+            });
+            if (modal) {
+                modal.addEventListener('click', function (event) {
+                    if (event.target === modal) {
+                        closeOrder();
+                    }
+                });
+            }
+            document.querySelectorAll('.reception-sidebar a').forEach(function (link) {
+                link.addEventListener('click', function () {
+                    setSidebar(false);
+                });
+            });
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    setSidebar(false);
+                    closeOrder();
+                }
+            });
+        }());
+    </script>
+{% endblock %}

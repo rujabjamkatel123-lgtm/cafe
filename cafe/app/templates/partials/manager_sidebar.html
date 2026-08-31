@@ -1,0 +1,214 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='css/manager-shell.css') }}">
+
+{% macro nav_icon(name, size=18) %}
+    {% if name == 'grid' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+        </svg>
+    {% elif name == 'menu' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"
+        >
+            <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+    {% elif name == 'history' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.5" />
+            <path d="M4 4v4.5h4.5M12 7v5l3 2" />
+        </svg>
+    {% elif name == 'chart' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M4 19V5M4 19h16" />
+            <path d="m7 15 3-3 3 2 5-6" />
+        </svg>
+    {% elif name == 'qr' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4z" />
+            <path d="M14 14h3v3h-3zM20 14v6M14 20h3" />
+        </svg>
+    {% elif name == 'inventory' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M5 8h14v12H5z" />
+            <path d="M8 8V5h8v3M8 12h8M8 16h5" />
+        </svg>
+    {% elif name == 'logout' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M10 17l5-5-5-5M15 12H3M21 19V5a2 2 0 0 0-2-2h-6" />
+        </svg>
+    {% else %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"
+        >
+            <path d="m6 6 12 12M18 6 6 18" />
+        </svg>
+    {% endif %}
+{% endmacro %}
+
+{% set current_page = manager_page | default('dashboard') %}
+{% set sidebar_id = manager_sidebar_id | default('managerSidebar') %}
+{% set sidebar_class = manager_sidebar_class | default('manager-sidebar') %}
+{% set navigation_class = manager_navigation_class | default('manager-navigation') %}
+
+<aside
+    class="manager-sidebar {{ sidebar_class }}"
+    id="{{ sidebar_id }}"
+    aria-label="Manager navigation"
+>
+    <div class="sidebar-top sidebar-header">
+        <a class="brand-lockup" href="{{ url_for('manager.dashboard') }}">
+            <span class="brand-mark">HB</span>
+            <span class="brand-copy">
+                <strong>Himalayan Bites</strong>
+                <small>Restaurant operations</small>
+            </span>
+        </a>
+        <button
+            class="icon-button sidebar-close"
+            id="sidebarClose"
+            type="button"
+            aria-label="Close navigation"
+        >
+            {{ nav_icon('close', 19) }}
+        </button>
+    </div>
+
+    <nav class="manager-navigation">
+        <span class="nav-label">Manager workspace</span>
+        <a
+            class="nav-link {% if current_page == 'dashboard' %}is-active{% endif %}"
+            href="{{ url_for('manager.dashboard') }}"
+        >
+            {{ nav_icon('grid') }}
+            <span>Dashboard</span>
+        </a>
+        <a
+            class="nav-link {% if current_page == 'menu' %}is-active{% endif %}"
+            href="{{ url_for('manager.menu') }}"
+        >
+            {{ nav_icon('menu') }}
+            <span>Menu management</span>
+        </a>
+        <a
+            class="nav-link {% if current_page == 'history' %}is-active{% endif %}"
+            href="{{ url_for('manager.history') }}"
+        >
+            {{ nav_icon('history') }}
+            <span>Order history</span>
+        </a>
+        <a
+            class="nav-link {% if current_page == 'reports' %}is-active{% endif %}"
+            href="{{ url_for('manager.reports') }}"
+        >
+            {{ nav_icon('chart') }}
+            <span>Reports</span>
+        </a>
+
+        <span class="nav-label nav-label-spaced">Tools</span>
+        <a
+            class="nav-link {% if current_page == 'qr' %}is-active{% endif %}"
+            href="{{ url_for('manager.table_qr_page') }}"
+        >
+            {{ nav_icon('qr') }}
+            <span>Table QR codes</span>
+        </a>
+        <a
+            class="nav-link {% if current_page == 'inventory' %}is-active{% endif %}"
+            href="{{ url_for('manager.inventory') }}"
+        >
+            {{ nav_icon('inventory') }}
+            <span>Inventory</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <div class="staff-card">
+            <span class="staff-avatar">M</span>
+            <span>
+                <strong>Manager</strong>
+                <small>Restaurant administrator</small>
+            </span>
+            <span class="online-dot" aria-label="Online"></span>
+        </div>
+        <a class="logout-link" href="{{ url_for('auth.logout') }}">
+            {{ nav_icon('logout', 17) }}
+            <span>Log out</span>
+        </a>
+    </div>
+</aside>

@@ -1,0 +1,809 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Sign in · Himalayan Bites
+{% endblock %}
+
+{% macro icon(name, size=20) %}
+    {% if name == 'arrow' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M5 12h13M13 6l6 6-6 6" />
+        </svg>
+    {% elif name == 'shield' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M12 3 20 6v5c0 5-3.4 8.5-8 10-4.6-1.5-8-5-8-10V6l8-3Z" />
+            <path d="m8.5 12 2.2 2.2 4.8-5" />
+        </svg>
+    {% elif name == 'eye' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M1.5 12S5 5 12 5s10.5 7 10.5 7S19 19 12 19 1.5 12 1.5 12Z" />
+            <circle cx="12" cy="12" r="3" />
+        </svg>
+    {% elif name == 'eye-off' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="m3 3 18 18M10.6 10.6a2 2 0 0 0 2.8 2.8" />
+            <path d="M9.9 5.2A11.2 11.2 0 0 1 12 5c7 0 10.5 7 10.5 7" />
+            <path d="M20.5 16.1A18.5 18.5 0 0 1 18.9 17M6.2 6.2C3.1 8.4 1.5 12 1.5 12S5 19 12 19a10.8 10.8 0 0 0 3.1-.5" />
+        </svg>
+    {% elif name == 'chef' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M7 10a4 4 0 1 1 2.5-7.1A4 4 0 0 1 17 6c0 .3 0 .7-.1 1A3.5 3.5 0 0 1 17 14H7a4 4 0 0 1 0-8" />
+            <path d="M8 14v7h8v-7M6 21h12" />
+        </svg>
+    {% elif name == 'table' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <rect x="4" y="5" width="16" height="10" rx="2" />
+            <path d="M7 19v-4M17 19v-4M8 19h8" />
+        </svg>
+    {% else %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"
+        >
+            <circle cx="12" cy="12" r="8.5" />
+        </svg>
+    {% endif %}
+{% endmacro %}
+
+{% block content %}
+    <div class="auth-page auth-login-page">
+        <section class="auth-visual" aria-label="Himalayan Bites introduction">
+            <img
+                class="auth-visual-image"
+                src="{{ url_for('static', filename='login.jpeg') }}"
+                alt="A freshly prepared restaurant dish"
+            >
+            <div class="auth-visual-overlay"></div>
+
+            <div class="auth-visual-content">
+                <a class="auth-brand light-brand" href="{{ url_for('auth.login') }}">
+                    <span class="brand-mark">HB</span>
+                    <span>
+                        <strong>Himalayan Bites</strong>
+                        <small>Restaurant management</small>
+                    </span>
+                </a>
+
+                <div class="visual-message">
+                    <span class="eyebrow light-eyebrow">Welcome back</span>
+                    <h1>Good service<br><em>starts here.</em></h1>
+                    <p>
+                        Sign in to keep your tables, orders, and restaurant operations moving.
+                    </p>
+                </div>
+
+                <div class="visual-features">
+                    <span>{{ icon('table', 17) }} Table orders</span>
+                    <span>{{ icon('chef', 17) }} Kitchen coordination</span>
+                    <span>{{ icon('shield', 17) }} Secure access</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="auth-form-panel">
+            <div class="auth-form-wrap">
+                <div class="mobile-brand-row">
+                    <a class="auth-brand" href="{{ url_for('auth.login') }}">
+                        <span class="brand-mark">HB</span>
+                        <span>
+                            <strong>Himalayan Bites</strong>
+                            <small>Restaurant management</small>
+                        </span>
+                    </a>
+                </div>
+
+                <div class="form-heading">
+                    <span class="eyebrow">Account access</span>
+                    <h2>Welcome back.</h2>
+                    <p>Sign in to continue to your restaurant workspace.</p>
+                </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flash-stack" aria-live="polite">
+                            {% for category, message in messages %}
+                                <div class="flash-message flash-{{ category }}">
+                                    <span>{{ icon('shield', 16) }}</span>
+                                    <p>{{ message }}</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <form
+                    class="auth-form"
+                    method="POST"
+                    action="{{ url_for('auth.login') }}"
+                    novalidate
+                >
+                    <div class="form-field">
+                        <label for="email">Email address</label>
+                        <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            value="{{ request.form.get('email', '') }}"
+                            placeholder="you@example.com"
+                            autocomplete="email"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-field">
+                        <div class="field-label-row">
+                            <label for="password">Password</label>
+                            <a href="{{ url_for('auth.forgot_password') }}">Forgot password?</a>
+                        </div>
+
+                        <div class="password-field">
+                            <input
+                                id="password"
+                                name="password"
+                                type="password"
+                                placeholder="Enter your password"
+                                autocomplete="current-password"
+                                required
+                            >
+                            <button
+                                class="password-toggle"
+                                type="button"
+                                data-password-toggle
+                                aria-label="Show password"
+                                aria-pressed="false"
+                            >
+                                {{ icon('eye', 19) }}
+                            </button>
+                        </div>
+                    </div>
+
+                    <label class="remember-field">
+                        <input type="checkbox" name="remember">
+                        <span>Keep me signed in on this device</span>
+                    </label>
+
+                    <button class="submit-button" type="submit">
+                        Sign in
+                        {{ icon('arrow', 18) }}
+                    </button>
+                </form>
+
+                <div class="divider" aria-hidden="true">
+                    <span>New to Himalayan Bites?</span>
+                </div>
+
+                <a
+                    class="secondary-button"
+                    href="{{ url_for('auth.register') }}"
+                >
+                    Create a customer account
+                </a>
+
+                <p class="security-note">
+                    {{ icon('shield', 16) }}
+                    Your credentials are handled through the restaurant's secure sign-in.
+                </p>
+            </div>
+        </section>
+    </div>
+{% endblock %}
+
+{% block extra_css %}
+    <style>
+        @import url(
+            'https://fonts.googleapis.com/css2?family=Karla:wght@300;400;500;600;700&family=Playfair+Display+SC:wght@400;700&display=swap'
+        );
+
+        :root {
+            --auth-red-950: #390909;
+            --auth-red-900: #450A0A;
+            --auth-red-700: #991B1B;
+            --auth-red-600: #DC2626;
+            --auth-red-50: #FEF2F2;
+            --auth-gold-700: #A16207;
+            --auth-gold-100: #FEF3C7;
+            --auth-ink: #271A1A;
+            --auth-muted: #756969;
+            --auth-paper: #FFFDF9;
+            --auth-line: #E9DED8;
+            --auth-font-display: 'Playfair Display SC', Georgia, serif;
+            --auth-font-body: 'Karla', system-ui, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            min-height: 100%;
+            margin: 0;
+        }
+
+        body {
+            background: var(--auth-paper);
+            color: var(--auth-ink);
+            font-family: var(--auth-font-body);
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        :is(a, button, input):focus-visible {
+            outline: 3px solid rgba(220, 38, 38, .28);
+            outline-offset: 3px;
+        }
+
+        .auth-page {
+            display: grid;
+            min-height: 100vh;
+            grid-template-columns: minmax(0, 1.05fr) minmax(420px, .95fr);
+        }
+
+        .auth-visual {
+            position: relative;
+            min-height: 700px;
+            overflow: hidden;
+            background: var(--auth-red-950);
+            color: #FFF;
+        }
+
+        .auth-visual-image,
+        .auth-visual-overlay {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .auth-visual-image {
+            object-fit: cover;
+            opacity: .88;
+        }
+
+        .auth-visual-overlay {
+            background:
+                linear-gradient(180deg, rgba(57, 9, 9, .60), rgba(57, 9, 9, .20) 42%, rgba(57, 9, 9, .94)),
+                linear-gradient(90deg, rgba(57, 9, 9, .15), rgba(57, 9, 9, .50));
+        }
+
+        .auth-visual-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: clamp(27px, 5vw, 66px);
+        }
+
+        .auth-brand {
+            display: inline-flex;
+            width: fit-content;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .auth-brand > span:last-child {
+            display: grid;
+            gap: 2px;
+        }
+
+        .brand-mark {
+            display: inline-flex;
+            width: 43px;
+            height: 43px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 13px;
+            background: var(--auth-red-600);
+            color: #FFF;
+            font-family: var(--auth-font-display);
+            font-size: 14px;
+            letter-spacing: .04em;
+        }
+
+        .auth-brand strong {
+            font-family: var(--auth-font-display);
+            font-size: 16px;
+            white-space: nowrap;
+        }
+
+        .auth-brand small {
+            color: var(--auth-muted);
+            font-size: 10px;
+            letter-spacing: .04em;
+        }
+
+        .light-brand .brand-mark {
+            border: 1px solid rgba(255, 255, 255, .30);
+            background: rgba(255, 255, 255, .12);
+        }
+
+        .light-brand small {
+            color: rgba(255, 255, 255, .62);
+        }
+
+        .visual-message {
+            max-width: 610px;
+            margin-top: auto;
+            margin-bottom: auto;
+            padding-top: 100px;
+            padding-bottom: 70px;
+        }
+
+        .eyebrow {
+            color: var(--auth-gold-700);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .17em;
+            text-transform: uppercase;
+        }
+
+        .light-eyebrow {
+            color: #FCD34D;
+        }
+
+        .visual-message h1 {
+            margin: 18px 0 16px;
+            font-family: var(--auth-font-display);
+            font-size: clamp(42px, 6vw, 78px);
+            line-height: .98;
+        }
+
+        .visual-message h1 em {
+            color: #FCA5A5;
+            font-style: normal;
+        }
+
+        .visual-message p {
+            max-width: 450px;
+            margin: 0;
+            color: rgba(255, 255, 255, .75);
+            font-size: 16px;
+            line-height: 1.65;
+        }
+
+        .visual-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px 18px;
+            color: rgba(255, 255, 255, .78);
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .visual-features span {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .visual-features svg {
+            color: #FCD34D;
+        }
+
+        .auth-form-panel {
+            display: flex;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+            padding: 55px clamp(24px, 6vw, 90px);
+            background: var(--auth-paper);
+        }
+
+        .auth-form-wrap {
+            width: min(100%, 460px);
+        }
+
+        .mobile-brand-row {
+            display: none;
+        }
+
+        .form-heading {
+            margin-bottom: 29px;
+        }
+
+        .form-heading h2 {
+            margin: 11px 0 7px;
+            font-family: var(--auth-font-display);
+            font-size: clamp(34px, 4vw, 49px);
+            line-height: 1;
+        }
+
+        .form-heading p {
+            margin: 0;
+            color: var(--auth-muted);
+            font-size: 14px;
+            line-height: 1.55;
+        }
+
+        .flash-stack {
+            display: grid;
+            gap: 9px;
+            margin-bottom: 21px;
+        }
+
+        .flash-message {
+            display: flex;
+            align-items: start;
+            gap: 9px;
+            padding: 12px 13px;
+            border: 1px solid var(--auth-line);
+            border-radius: 11px;
+            background: #FFF;
+            color: var(--auth-muted);
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .flash-message p {
+            margin: 0;
+        }
+
+        .flash-success {
+            border-color: #B8DEC4;
+            background: #F4FBF6;
+            color: #246B39;
+        }
+
+        .flash-danger,
+        .flash-error {
+            border-color: #F1C3C0;
+            background: #FFF7F6;
+            color: var(--auth-red-700);
+        }
+
+        .flash-warning {
+            border-color: #EED6A1;
+            background: #FFFCF1;
+            color: var(--auth-gold-700);
+        }
+
+        .auth-form {
+            display: grid;
+            gap: 21px;
+        }
+
+        .form-field {
+            display: grid;
+            gap: 8px;
+        }
+
+        .form-field label,
+        .field-label-row label {
+            color: var(--auth-ink);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .field-label-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+        }
+
+        .field-label-row a {
+            color: var(--auth-red-700);
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .field-label-row a:hover {
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .form-field input:not([type='checkbox']) {
+            width: 100%;
+            min-height: 50px;
+            padding: 0 15px;
+            border: 1px solid var(--auth-line);
+            border-radius: 11px;
+            background: #FFF;
+            color: var(--auth-ink);
+            font-size: 14px;
+            outline: 0;
+            transition: border-color .2s ease, box-shadow .2s ease;
+        }
+
+        .form-field input:not([type='checkbox'])::placeholder {
+            color: #A79A9A;
+        }
+
+        .form-field input:not([type='checkbox']):hover {
+            border-color: #D8C4BC;
+        }
+
+        .form-field input:not([type='checkbox']):focus {
+            border-color: var(--auth-red-600);
+            box-shadow: 0 0 0 4px rgba(220, 38, 38, .10);
+        }
+
+        .password-field {
+            position: relative;
+        }
+
+        .password-field input {
+            padding-right: 52px !important;
+        }
+
+        .password-toggle {
+            position: absolute;
+            top: 50%;
+            right: 8px;
+            display: inline-flex;
+            width: 36px;
+            height: 36px;
+            align-items: center;
+            justify-content: center;
+            border: 0;
+            border-radius: 9px;
+            background: transparent;
+            color: #9D8F8F;
+            transform: translateY(-50%);
+        }
+
+        .password-toggle:hover {
+            background: var(--auth-red-50);
+            color: var(--auth-red-700);
+        }
+
+        .remember-field {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: var(--auth-muted);
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .remember-field input {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+            accent-color: var(--auth-red-600);
+        }
+
+        .submit-button,
+        .secondary-button {
+            display: inline-flex;
+            width: 100%;
+            min-height: 50px;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            border-radius: 11px;
+            font-size: 13px;
+            font-weight: 700;
+            transition: background .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+        }
+
+        .submit-button {
+            border: 1px solid var(--auth-red-700);
+            background: var(--auth-red-700);
+            color: #FFF;
+            box-shadow: 0 9px 18px rgba(153, 27, 27, .16);
+        }
+
+        .submit-button:hover {
+            background: var(--auth-red-600);
+            box-shadow: 0 12px 24px rgba(153, 27, 27, .22);
+            transform: translateY(-1px);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 27px 0 15px;
+            color: #A69797;
+            font-size: 11px;
+        }
+
+        .divider::before,
+        .divider::after {
+            height: 1px;
+            flex: 1;
+            background: var(--auth-line);
+            content: '';
+        }
+
+        .secondary-button {
+            border: 1px solid var(--auth-line);
+            background: transparent;
+            color: var(--auth-red-700);
+        }
+
+        .secondary-button:hover {
+            border-color: #E1B6B0;
+            background: var(--auth-red-50);
+            transform: translateY(-1px);
+        }
+
+        .security-note {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            margin: 23px 0 0;
+            color: #9B8D8D;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        .security-note svg {
+            color: var(--auth-gold-700);
+        }
+
+        @media (max-width: 900px) {
+            .auth-page {
+                grid-template-columns: 1fr;
+            }
+
+            .auth-visual {
+                min-height: 330px;
+            }
+
+            .auth-visual-content {
+                min-height: 330px;
+                padding: 25px 28px;
+            }
+
+            .visual-message {
+                margin: 0;
+                padding: 50px 0 25px;
+            }
+
+            .visual-message h1 {
+                font-size: clamp(36px, 9vw, 54px);
+            }
+
+            .auth-form-panel {
+                min-height: auto;
+                padding: 48px 24px 60px;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .auth-visual {
+                display: none;
+            }
+
+            .auth-form-panel {
+                min-height: 100vh;
+                align-items: start;
+                padding: 31px 20px 48px;
+            }
+
+            .mobile-brand-row {
+                display: block;
+                margin-bottom: 63px;
+            }
+
+            .form-heading h2 {
+                font-size: 39px;
+            }
+
+            .security-note {
+                align-items: start;
+                line-height: 1.45;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        (function () {
+            const toggle = document.querySelector('[data-password-toggle]');
+            const passwordInput = document.getElementById('password');
+
+            if (!toggle || !passwordInput) {
+                return;
+            }
+
+            toggle.addEventListener('click', function () {
+                const isVisible = passwordInput.type === 'text';
+                passwordInput.type = isVisible ? 'password' : 'text';
+                toggle.setAttribute('aria-pressed', String(!isVisible));
+                toggle.setAttribute(
+                    'aria-label',
+                    isVisible ? 'Show password' : 'Hide password'
+                );
+                toggle.innerHTML = isVisible
+                    ? `{{ icon('eye', 19) }}`
+                    : `{{ icon('eye-off', 19) }}`;
+            });
+        }());
+    </script>
+{% endblock %}

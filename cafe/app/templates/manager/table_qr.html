@@ -1,0 +1,977 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Table QR Studio · Himalayan Bites
+{% endblock %}
+
+{% macro icon(name, size=20) %}
+    {% if name == 'arrow-left' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M19 12H5M11 6l-6 6 6 6" />
+        </svg>
+    {% elif name == 'qr' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <rect x="4" y="4" width="6" height="6" rx="1" />
+            <rect x="14" y="4" width="6" height="6" rx="1" />
+            <rect x="4" y="14" width="6" height="6" rx="1" />
+            <path d="M14 14h2v2h-2zM18 14h2M14 18h2M18 18h2v2h-2z" />
+        </svg>
+    {% elif name == 'download' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M12 4v11M8 11l4 4 4-4M5 20h14" />
+        </svg>
+    {% elif name == 'printer' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M6 9V4h12v5M6 17H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2" />
+            <path d="M6 14h12v6H6z" />
+        </svg>
+    {% elif name == 'check' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="m5 12 4.2 4.2L19 6.5" />
+        </svg>
+    {% elif name == 'info' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"
+        >
+            <circle cx="12" cy="12" r="8.5" />
+            <path d="M12 10.5v5M12 7.5h.01" />
+        </svg>
+    {% elif name == 'grid' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+        </svg>
+    {% elif name == 'menu' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"
+        >
+            <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+    {% elif name == 'chart' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M4 19V5M4 19h17M7 15l4-4 3 2 5-6" />
+        </svg>
+    {% elif name == 'logout' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M10 17l5-5-5-5M15 12H3M21 19V5a2 2 0 0 0-2-2h-6" />
+        </svg>
+    {% else %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"
+        >
+            <circle cx="12" cy="12" r="8.5" />
+        </svg>
+    {% endif %}
+{% endmacro %}
+
+{% block content %}
+    <div class="qr-studio" id="qrStudio">
+        {% set manager_page = 'qr' %}
+{% set manager_sidebar_id = 'qrSidebar' %}
+{% set manager_sidebar_class = 'qr-sidebar' %}
+{% set manager_navigation_class = 'qr-navigation' %}
+{% include "partials/manager_sidebar.html" %}
+
+        <main class="qr-main" id="qr-codes">
+            <header class="qr-header">
+                <a class="back-link" href="{{ url_for('manager.dashboard') }}">
+                    {{ icon('arrow-left', 17) }}
+                    Back to dashboard
+                </a>
+                <div class="header-profile">
+                    <span class="profile-avatar">M</span>
+                    <span>
+                        <strong>Manager</strong>
+                        <small>Administrator</small>
+                    </span>
+                </div>
+            </header>
+
+            <div class="qr-content">
+                <section class="page-intro">
+                    <div>
+                        <span class="eyebrow">Table ordering</span>
+                        <h1>Table QR studio</h1>
+                        <p>Generate, print, and place a clear ordering code at every dining table.</p>
+                    </div>
+                    <div class="intro-status">
+                        <span class="status-dot"></span>
+                        <span>{{ table_qr_codes | length }} active table codes</span>
+                    </div>
+                </section>
+
+                <section class="instruction-card">
+                    <span class="instruction-icon">{{ icon('info', 21) }}</span>
+                    <div>
+                        <strong>Print at the right size</strong>
+                        <p>Use a clear, high-contrast print and place the code where guests can scan it without moving table items.</p>
+                    </div>
+                </section>
+
+                <section class="qr-grid">
+                    {% for qr in table_qr_codes %}
+                        <article class="qr-card">
+                            <div class="qr-card-header">
+                                <div>
+                                    <span class="qr-kicker">Ordering code</span>
+                                    <h2>Table {{ qr.number }}</h2>
+                                </div>
+                                <span class="qr-card-status">
+                                    {{ icon('check', 13) }}
+                                    Active
+                                </span>
+                            </div>
+
+                            <div class="qr-image-wrap">
+                                <img
+                                    src="{{ qr.image_url }}"
+                                    alt="QR code for Table {{ qr.number }}"
+                                    loading="lazy"
+                                >
+                            </div>
+
+                            <div class="qr-card-details">
+                                <span>Guests scan to open the menu</span>
+                                <small>Table-specific ordering link</small>
+                            </div>
+
+                            <div class="qr-card-actions">
+                                <a
+                                    class="qr-button qr-button-primary"
+                                    href="{{ qr.download_url }}"
+                                    download
+                                >
+                                    {{ icon('download', 16) }}
+                                    Download PNG
+                                </a>
+                                <button
+                                    class="qr-button qr-button-secondary"
+                                    type="button"
+                                    data-print-qr
+                                    data-image-url="{{ qr.image_url }}"
+                                    data-table-label="Table {{ qr.number }}"
+                                >
+                                    {{ icon('printer', 16) }}
+                                    Print
+                                </button>
+                            </div>
+                        </article>
+                    {% else %}
+                        <div class="empty-state">
+                            <span class="empty-icon">{{ icon('qr', 27) }}</span>
+                            <h2>No table codes available</h2>
+                            <p>Table QR codes will appear here when the manager configuration is available.</p>
+                        </div>
+                    {% endfor %}
+                </section>
+
+                <section class="placement-card">
+                    <div class="placement-icon">{{ icon('check', 22) }}</div>
+                    <div>
+                        <span class="eyebrow">Before service</span>
+                        <h2>Quick placement checklist</h2>
+                        <p>
+                            Test one code from a phone, confirm the table number, and laminate
+                            or protect each printed card before placing it.
+                        </p>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+{% endblock %}
+
+{% block extra_css %}
+    <style>
+        @import url(
+            'https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600;700&display=swap'
+        );
+
+        :root {
+            --navy-950: #101B2D;
+            --navy-900: #14213D;
+            --navy-800: #1B2A4A;
+            --green-700: #176B4D;
+            --green-100: #EAF5EF;
+            --blue-700: #2F5D8C;
+            --blue-100: #EAF2FA;
+            --amber-700: #A16207;
+            --amber-100: #FFF5DB;
+            --ink: #243142;
+            --muted: #6D7B89;
+            --background: #F5F8FB;
+            --surface: #FFFFFF;
+            --border: #DCE5EE;
+            --shadow-small: 0 8px 24px rgba(20, 33, 61, .06);
+            --shadow-medium: 0 18px 42px rgba(20, 33, 61, .11);
+            --radius-medium: 15px;
+            --radius-large: 22px;
+            --font-display: 'Fira Code', monospace;
+            --font-body: 'Fira Sans', system-ui, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: var(--background);
+            color: var(--ink);
+            font-family: var(--font-body);
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button {
+            cursor: pointer;
+            font: inherit;
+        }
+
+        :is(a, button):focus-visible {
+            outline: 3px solid rgba(47, 93, 140, .30);
+            outline-offset: 3px;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .qr-studio {
+            min-height: 100vh;
+            background: var(--background);
+        }
+
+        .qr-sidebar {
+            position: fixed;
+            inset: 0 auto 0 0;
+            z-index: 10;
+            display: flex;
+            width: 258px;
+            flex-direction: column;
+            padding: 27px 18px 20px;
+            background: var(--green-700);
+            color: #FFF;
+            box-shadow: 12px 0 38px rgba(20, 33, 61, .14);
+        }
+
+        .brand-lockup {
+            display: inline-flex;
+            min-width: 0;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .brand-mark {
+            display: inline-flex;
+            width: 43px;
+            height: 43px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 13px;
+            background: #FFF;
+            color: var(--green-700);
+            font-family: var(--font-display);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .brand-lockup > span:last-child,
+        .staff-card > span:last-child,
+        .header-profile > span:last-child {
+            display: grid;
+            gap: 2px;
+        }
+
+        .brand-lockup strong {
+            font-family: var(--font-display);
+            font-size: 15px;
+            white-space: nowrap;
+        }
+
+        .brand-lockup small {
+            color: rgba(255, 255, 255, .60);
+            font-size: 10px;
+            letter-spacing: .04em;
+        }
+
+        .qr-navigation {
+            display: grid;
+            gap: 5px;
+            margin-top: 48px;
+        }
+
+        .nav-label {
+            padding: 0 12px 9px;
+            color: rgba(255, 255, 255, .42);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+        }
+
+        .nav-link {
+            display: flex;
+            min-height: 47px;
+            align-items: center;
+            gap: 12px;
+            padding: 0 13px;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, .70);
+            font-size: 13px;
+            font-weight: 600;
+            transition: background .2s ease, color .2s ease, transform .2s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, .10);
+            color: #FFF;
+            transform: translateX(2px);
+        }
+
+        .nav-link.is-active {
+            background: #FFF;
+            color: var(--green-700);
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255, 255, 255, .12);
+        }
+
+        .staff-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px;
+            border-radius: 13px;
+            background: rgba(255, 255, 255, .10);
+        }
+
+        .staff-avatar,
+        .profile-avatar {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: 700;
+        }
+
+        .staff-avatar {
+            width: 37px;
+            height: 37px;
+            background: #FFF;
+            color: var(--green-700);
+        }
+
+        .staff-card strong {
+            font-size: 12px;
+        }
+
+        .staff-card small {
+            color: rgba(255, 255, 255, .52);
+            font-size: 10px;
+        }
+
+        .logout-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+            padding: 11px;
+            border-radius: 10px;
+            color: rgba(255, 255, 255, .55);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .logout-link:hover {
+            background: rgba(201, 78, 66, .16);
+            color: #FFD0CA;
+        }
+
+        .qr-main {
+            min-height: 100vh;
+            margin-left: 258px;
+        }
+
+        .qr-header {
+            display: flex;
+            min-height: 82px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 18px clamp(24px, 4vw, 58px);
+            border-bottom: 1px solid var(--border);
+            background: rgba(255, 255, 255, .92);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--blue-700);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .back-link:hover {
+            color: var(--green-700);
+        }
+
+        .header-profile {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .profile-avatar {
+            width: 39px;
+            height: 39px;
+            background: var(--green-700);
+            color: #FFF;
+        }
+
+        .header-profile strong {
+            color: var(--navy-900);
+            font-size: 12px;
+        }
+
+        .header-profile small {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .qr-content {
+            width: min(1320px, calc(100% - 48px));
+            margin: 0 auto;
+            padding: 44px 0 65px;
+        }
+
+        .page-intro {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 24px;
+            margin-bottom: 26px;
+        }
+
+        .eyebrow,
+        .section-kicker,
+        .qr-kicker {
+            color: var(--green-700);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+        }
+
+        .page-intro h1 {
+            margin: 8px 0 7px;
+            color: var(--navy-900);
+            font-family: var(--font-display);
+            font-size: clamp(29px, 4vw, 45px);
+            line-height: 1.05;
+        }
+
+        .page-intro p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .intro-status {
+            display: inline-flex;
+            min-height: 35px;
+            align-items: center;
+            gap: 8px;
+            padding: 0 12px;
+            border: 1px solid #CBE8D6;
+            border-radius: 999px;
+            background: #F2FBF5;
+            color: #227549;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #2F9B67;
+            box-shadow: 0 0 0 4px #DDF4E6;
+        }
+
+        .instruction-card,
+        .placement-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-radius: var(--radius-medium);
+        }
+
+        .instruction-card {
+            margin-bottom: 28px;
+            padding: 16px 18px;
+            border: 1px solid #F0D9B4;
+            background: #FFFCF1;
+        }
+
+        .instruction-icon,
+        .placement-icon {
+            display: inline-flex;
+            flex: 0 0 auto;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+        }
+
+        .instruction-icon {
+            width: 38px;
+            height: 38px;
+            background: var(--amber-100);
+            color: var(--amber-700);
+        }
+
+        .instruction-card strong {
+            color: var(--navy-900);
+            font-size: 12px;
+        }
+
+        .instruction-card p {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.45;
+        }
+
+        .qr-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .qr-card {
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-medium);
+            background: var(--surface);
+            box-shadow: var(--shadow-small);
+            transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+        }
+
+        .qr-card:hover {
+            border-color: #B9D8C6;
+            box-shadow: var(--shadow-medium);
+            transform: translateY(-2px);
+        }
+
+        .qr-card-header {
+            display: flex;
+            align-items: start;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .qr-card h2 {
+            margin: 6px 0 0;
+            color: var(--navy-900);
+            font-family: var(--font-display);
+            font-size: 18px;
+        }
+
+        .qr-card-status {
+            display: inline-flex;
+            min-height: 24px;
+            align-items: center;
+            gap: 4px;
+            padding: 0 7px;
+            border-radius: 999px;
+            background: var(--green-100);
+            color: var(--green-700);
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .qr-image-wrap {
+            display: flex;
+            aspect-ratio: 1;
+            align-items: center;
+            justify-content: center;
+            margin-top: 15px;
+            padding: 13px;
+            border: 1px solid #EFF3F6;
+            border-radius: 11px;
+            background: #FFF;
+        }
+
+        .qr-image-wrap img {
+            display: block;
+            width: 100%;
+            max-width: 205px;
+            height: auto;
+        }
+
+        .qr-card-details {
+            display: grid;
+            gap: 4px;
+            margin-top: 13px;
+        }
+
+        .qr-card-details span {
+            color: var(--navy-900);
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .qr-card-details small {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .qr-card-actions {
+            display: grid;
+            grid-template-columns: 1.25fr 1fr;
+            gap: 6px;
+            margin-top: 14px;
+        }
+
+        .qr-button {
+            display: inline-flex;
+            min-height: 34px;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .qr-button-primary {
+            border: 1px solid var(--green-700);
+            background: var(--green-700);
+            color: #FFF;
+        }
+
+        .qr-button-primary:hover {
+            background: #21825E;
+        }
+
+        .qr-button-secondary {
+            border: 1px solid var(--border);
+            background: #FFF;
+            color: var(--navy-900);
+        }
+
+        .qr-button-secondary:hover {
+            border-color: var(--blue-700);
+            background: var(--blue-100);
+            color: var(--blue-700);
+        }
+
+        .placement-card {
+            margin-top: 28px;
+            padding: 19px;
+            border: 1px solid #CFE3D6;
+            background: #F7FCF8;
+        }
+
+        .placement-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--green-100);
+            color: var(--green-700);
+        }
+
+        .placement-card h2 {
+            margin: 5px 0 5px;
+            color: var(--navy-900);
+            font-family: var(--font-display);
+            font-size: 19px;
+        }
+
+        .placement-card p {
+            max-width: 720px;
+            margin: 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .empty-state {
+            display: grid;
+            grid-column: 1 / -1;
+            justify-items: center;
+            padding: 50px 20px;
+            border: 1px dashed #C9D7E2;
+            border-radius: var(--radius-medium);
+            text-align: center;
+        }
+
+        .empty-icon {
+            display: inline-flex;
+            width: 54px;
+            height: 54px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 17px;
+            background: var(--green-100);
+            color: var(--green-700);
+        }
+
+        .empty-state h2 {
+            margin: 14px 0 5px;
+            color: var(--navy-900);
+            font-family: var(--font-display);
+            font-size: 20px;
+        }
+
+        .empty-state p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        @media (max-width: 1120px) {
+            .qr-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 840px) {
+            .qr-sidebar {
+                width: 220px;
+            }
+
+            .qr-main {
+                margin-left: 258px;
+            }
+
+            .qr-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 620px) {
+            .qr-sidebar {
+                position: static;
+                width: 100%;
+                min-height: auto;
+                padding: 18px 16px;
+            }
+
+            .qr-navigation,
+            .sidebar-footer {
+                display: none;
+            }
+
+            .qr-main {
+                margin-left: 0;
+            }
+
+            .qr-header {
+                min-height: 66px;
+                padding: 13px 16px;
+            }
+
+            .header-profile > span:last-child {
+                display: none;
+            }
+
+            .qr-content {
+                width: calc(100% - 32px);
+                padding-top: 30px;
+            }
+
+            .page-intro {
+                align-items: start;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .page-intro h1 {
+                font-size: 34px;
+            }
+
+            .qr-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .qr-card-actions {
+                grid-template-columns: 1.4fr 1fr;
+            }
+
+            .placement-card,
+            .instruction-card {
+                align-items: start;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        (function () {
+            function printQrCode(imageUrl, label) {
+                const popup = window.open('', '_blank', 'width=520,height=700');
+
+                if (!popup) {
+                    return;
+                }
+
+                popup.document.write(
+                    '<!doctype html>' +
+                    '<html><head><title>' + label + ' QR Code</title></head>' +
+                    '<body style="font-family:Arial,sans-serif;text-align:center;padding:28px">' +
+                    '<h1 style="font-size:28px;margin:0 0 20px">' + label + '</h1>' +
+                    '<img style="width:460px;max-width:90vw" src="' + imageUrl + '" alt="' + label + ' QR code">' +
+                    '<p style="font-size:16px;margin-top:20px">Scan to order from this table</p>' +
+                    '</body></html>'
+                );
+                popup.document.close();
+                popup.focus();
+                popup.print();
+            }
+
+            document.querySelectorAll('[data-print-qr]').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    printQrCode(
+                        button.dataset.imageUrl,
+                        button.dataset.tableLabel
+                    );
+                });
+            });
+        }());
+    </script>
+{% endblock %}

@@ -1,0 +1,667 @@
+/*
+   Himalayan Bites · hospitality operations theme
+
+   This layer is intentionally loaded after each page's local CSS. It keeps
+   the existing Flask/Jinja markup and JavaScript contracts intact while
+   giving staff screens one recognizable restaurant POS visual language.
+*/
+
+:root {
+    --ops-ink: #25211d;
+    --ops-ink-soft: #635b53;
+    --ops-bg: #f4efe8;
+    --ops-surface: #fffdf8;
+    --ops-surface-warm: #fbf5ec;
+    --ops-border: #e5d9ca;
+    --ops-sidebar: #252a25;
+    --ops-sidebar-2: #303730;
+    --ops-accent: #c9653e;
+    --ops-accent-dark: #a94f30;
+    --ops-sage: #6d8b73;
+    --ops-amber: #d79b43;
+    --ops-danger: #b6534b;
+    --ops-shadow: 0 14px 34px rgba(67, 48, 33, .08);
+    --ops-shadow-strong: 0 20px 44px rgba(67, 48, 33, .14);
+    --motion-fast: 160ms;
+    --motion-standard: 280ms;
+    --motion-ease: cubic-bezier(.22, 1, .36, 1);
+}
+
+.manager-app,
+.menu-app,
+.reports-app,
+.qr-studio,
+.inventory-app,
+.manager-history-view,
+.reception-app,
+.orders-app,
+.reception-history-view {
+    min-height: 100vh;
+    overflow-x: hidden;
+    background: var(--ops-bg) !important;
+    color: var(--ops-ink) !important;
+}
+
+.manager-app .manager-sidebar,
+.menu-app .menu-sidebar,
+.reports-app .reports-sidebar,
+.qr-studio .qr-sidebar,
+.inventory-app .inventory-sidebar,
+.manager-history-view .manager-sidebar,
+.reception-app .reception-sidebar,
+.orders-app .orders-sidebar,
+.reception-history-view .mobile-menu {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 60;
+    display: flex;
+    height: 100vh;
+    width: 258px;
+    flex-direction: column;
+    padding: 24px 16px 18px;
+    overflow-y: auto;
+    background: var(--ops-sidebar) !important;
+    border-color: rgba(255, 249, 239, .10) !important;
+    box-shadow: 12px 0 34px rgba(37, 29, 22, .12) !important;
+}
+
+.manager-app .manager-main,
+.menu-app .menu-main,
+.reports-app .reports-main,
+.qr-studio .qr-main,
+.inventory-app .inventory-main,
+.reception-app .reception-main,
+.orders-app .orders-main,
+.manager-history-view > main {
+    min-height: 100vh;
+    margin-left: 258px;
+    background: transparent !important;
+}
+
+.manager-app .content-wrap,
+.menu-app .menu-content,
+.reports-app .reports-content,
+.qr-studio .qr-content,
+.inventory-app .inventory-content,
+.reception-app .content-wrap,
+.orders-app .orders-content,
+.manager-history-view > main > section,
+.reception-history-view main > section {
+    width: min(1360px, calc(100% - 48px));
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.manager-app .topbar,
+.menu-app .topbar,
+.reports-app .topbar,
+.qr-studio .topbar,
+.inventory-app .topbar,
+.reception-app .topbar,
+.orders-app .topbar,
+.manager-history-view > main > header,
+.reception-history-view main > header {
+    background: rgba(255, 253, 248, .94) !important;
+    border-color: var(--ops-border) !important;
+    box-shadow: 0 1px 0 rgba(67, 48, 33, .04) !important;
+    backdrop-filter: blur(14px);
+}
+
+.manager-app .brand-mark,
+.menu-app .brand-mark,
+.reports-app .brand-mark,
+.qr-studio .brand-mark,
+.inventory-app .brand-mark,
+.reception-app .brand-mark,
+.orders-app .brand-mark,
+.manager-history-view aside .h-11,
+.reception-history-view .mobile-menu .h-11 {
+    background: var(--ops-accent) !important;
+    color: #fffaf2 !important;
+    box-shadow: 0 8px 18px rgba(201, 101, 62, .24) !important;
+}
+
+.manager-app .brand-copy strong,
+.menu-app .brand-copy strong,
+.reports-app .brand-copy strong,
+.qr-studio .brand-copy strong,
+.inventory-app .brand-copy strong,
+.reception-app .brand-copy strong,
+.orders-app .brand-copy strong {
+    color: #fffaf2 !important;
+    font-family: 'Playfair Display SC', Georgia, serif !important;
+    letter-spacing: .02em;
+}
+
+.manager-app .brand-copy small,
+.menu-app .brand-copy small,
+.reports-app .brand-copy small,
+.qr-studio .brand-copy small,
+.inventory-app .brand-copy small,
+.reception-app .brand-copy small,
+.orders-app .brand-copy small {
+    color: rgba(255, 250, 242, .62) !important;
+}
+
+.manager-app .nav-label,
+.menu-app .nav-label,
+.reports-app .nav-label,
+.qr-studio .nav-label,
+.inventory-app .nav-label,
+.reception-app .nav-label,
+.orders-app .nav-label {
+    color: rgba(255, 250, 242, .42) !important;
+    letter-spacing: .16em !important;
+}
+
+.manager-sidebar .sidebar-top,
+.manager-sidebar .sidebar-header {
+    display: flex;
+    min-height: 58px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.manager-sidebar .manager-navigation {
+    display: grid;
+    flex: 1;
+    align-content: start;
+    gap: 7px;
+    margin-top: 30px;
+    overflow-y: auto;
+}
+
+.manager-sidebar .sidebar-footer {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 250, 242, .12);
+}
+
+.manager-sidebar .sidebar-close {
+    display: none;
+}
+
+.manager-app .nav-link,
+.menu-app .nav-link,
+.reports-app .nav-link,
+.qr-studio .nav-link,
+.inventory-app .nav-link,
+.reception-app .nav-link,
+.orders-app .nav-link,
+.manager-history-view aside nav a {
+    min-height: 44px;
+    border: 1px solid transparent !important;
+    border-radius: 12px !important;
+    color: rgba(255, 250, 242, .70) !important;
+    transition: background-color var(--motion-fast) ease,
+        border-color var(--motion-fast) ease,
+        color var(--motion-fast) ease,
+        transform var(--motion-fast) ease;
+}
+
+.manager-app .nav-link:hover,
+.menu-app .nav-link:hover,
+.reports-app .nav-link:hover,
+.qr-studio .nav-link:hover,
+.inventory-app .nav-link:hover,
+.reception-app .nav-link:hover,
+.orders-app .nav-link:hover,
+.manager-history-view aside nav a:hover {
+    background: rgba(255, 250, 242, .08) !important;
+    border-color: rgba(255, 250, 242, .10) !important;
+    color: #fffaf2 !important;
+    transform: translateX(2px);
+}
+
+.manager-app .nav-link.is-active,
+.menu-app .nav-link.is-active,
+.reports-app .nav-link.is-active,
+.qr-studio .nav-link.is-active,
+.inventory-app .nav-link.is-active,
+.reception-app .nav-link.is-active,
+.orders-app .nav-link.is-active {
+    background: var(--ops-accent) !important;
+    border-color: rgba(255, 250, 242, .18) !important;
+    color: #fffaf2 !important;
+    box-shadow: 0 8px 18px rgba(201, 101, 62, .22) !important;
+}
+
+.manager-app .staff-card,
+.menu-app .staff-card,
+.reports-app .staff-card,
+.qr-studio .staff-card,
+.inventory-app .staff-card,
+.reception-app .staff-card,
+.orders-app .staff-card {
+    border-color: rgba(255, 250, 242, .12) !important;
+    background: rgba(255, 250, 242, .07) !important;
+}
+
+.manager-app .staff-avatar,
+.menu-app .staff-avatar,
+.reports-app .staff-avatar,
+.qr-studio .staff-avatar,
+.inventory-app .staff-avatar,
+.reception-app .staff-avatar,
+.orders-app .staff-avatar {
+    background: var(--ops-sage) !important;
+    color: #fffaf2 !important;
+}
+
+.manager-app .logout-link,
+.menu-app .logout-link,
+.reports-app .logout-link,
+.qr-studio .logout-link,
+.inventory-app .logout-link,
+.reception-app .logout-link,
+.orders-app .logout-link {
+    color: rgba(255, 250, 242, .62) !important;
+}
+
+.manager-app .metric-card,
+.manager-app .panel,
+.manager-app .welcome-card,
+.manager-app .qr-card,
+.menu-app .metric-card,
+.menu-app .panel,
+.menu-app .add-panel,
+.menu-app .menu-card,
+.reports-app .metric-card,
+.reports-app .panel,
+.reports-app .filter-panel,
+.qr-studio .qr-card,
+.qr-studio .qr-panel,
+.inventory-app .metric-card,
+.inventory-app .panel,
+.inventory-app .filter-panel,
+.reception-app .metric-card,
+.reception-app .order-card,
+.reception-app .table-card,
+.reception-app .service-card,
+.orders-app .orders-panel,
+.orders-app .order-card,
+.manager-history-view .history-card,
+.reception-history-view .history-card,
+.reception-history-view .card-hover {
+    background: var(--ops-surface) !important;
+    border-color: var(--ops-border) !important;
+    box-shadow: var(--ops-shadow) !important;
+}
+
+.manager-app .metric-card:hover,
+.manager-app .panel:hover,
+.menu-app .menu-card:hover,
+.reports-app .panel:hover,
+.reception-app .order-card:hover,
+.reception-app .table-card:hover,
+.orders-app .order-card:hover,
+.manager-history-view .history-card:hover,
+.reception-history-view .history-card:hover {
+    border-color: rgba(201, 101, 62, .42) !important;
+    box-shadow: var(--ops-shadow-strong) !important;
+}
+
+.manager-app .metric-icon,
+.reception-app .service-card-icon,
+.reception-app .quick-action-icon,
+.manager-app .quick-action-icon,
+.menu-app .filter-icon,
+.reports-app .filter-icon,
+.inventory-app .filter-icon {
+    background: var(--ops-surface-warm) !important;
+    color: var(--ops-accent) !important;
+    border-color: var(--ops-border) !important;
+}
+
+.manager-app .metric-value,
+.reception-app .metric-value,
+.orders-app .metric-value,
+.manager-history-view h2,
+.reception-history-view h2 {
+    color: var(--ops-ink) !important;
+}
+.reception-history-view .reception-history-hero h2 {
+    color: #fffaf2 !important;
+}
+
+.manager-app .section-kicker,
+.menu-app .section-kicker,
+.reports-app .section-kicker,
+.qr-studio .section-kicker,
+.inventory-app .section-kicker,
+.reception-app .section-kicker,
+.orders-app .section-kicker,
+.manager-history-view .text-restaurant-orange,
+.reception-history-view .text-restaurant-orange {
+    color: var(--ops-accent) !important;
+}
+
+.manager-app .primary-button,
+.manager-app .primary-action,
+.menu-app .primary-button,
+.menu-app .primary-action,
+.reports-app .primary-button,
+.reports-app .primary-action,
+.qr-studio .qr-button-primary,
+.inventory-app .primary-button,
+.inventory-app .primary-action,
+.reception-app .primary-button,
+.reception-app .primary-action,
+.orders-app .primary-button,
+.orders-app .primary-action,
+.manager-history-view main a.bg-restaurant-navy,
+.reception-history-view main a.bg-restaurant-navy,
+.reception-history-view main button.bg-restaurant-navy {
+    background: var(--ops-accent) !important;
+    border-color: var(--ops-accent) !important;
+    color: #fffaf2 !important;
+    box-shadow: 0 8px 16px rgba(201, 101, 62, .18) !important;
+}
+
+.manager-app .primary-button:hover,
+.manager-app .primary-action:hover,
+.menu-app .primary-button:hover,
+.menu-app .primary-action:hover,
+.reports-app .primary-button:hover,
+.reports-app .primary-action:hover,
+.qr-studio .qr-button-primary:hover,
+.inventory-app .primary-button:hover,
+.inventory-app .primary-action:hover,
+.reception-app .primary-button:hover,
+.reception-app .primary-action:hover,
+.orders-app .primary-button:hover,
+.orders-app .primary-action:hover {
+    background: var(--ops-accent-dark) !important;
+    border-color: var(--ops-accent-dark) !important;
+}
+
+.manager-app .outline-button,
+.manager-app .secondary-button,
+.menu-app .outline-button,
+.menu-app .secondary-button,
+.reports-app .outline-button,
+.reports-app .secondary-button,
+.qr-studio .qr-button-secondary,
+.inventory-app .outline-button,
+.inventory-app .secondary-button,
+.reception-app .outline-button,
+.reception-app .secondary-button,
+.orders-app .outline-button,
+.orders-app .secondary-button {
+    border-color: var(--ops-border) !important;
+    background: var(--ops-surface) !important;
+    color: var(--ops-ink-soft) !important;
+}
+
+.manager-app input,
+.manager-app select,
+.manager-app textarea,
+.menu-app input,
+.menu-app select,
+.menu-app textarea,
+.reports-app input,
+.reports-app select,
+.reports-app textarea,
+.inventory-app input,
+.inventory-app select,
+.inventory-app textarea,
+.reception-app input,
+.reception-app select,
+.reception-app textarea,
+.orders-app input,
+.orders-app select,
+.orders-app textarea {
+    border-color: var(--ops-border) !important;
+    background: #fffefa !important;
+    color: var(--ops-ink) !important;
+}
+
+.manager-app input:focus,
+.manager-app select:focus,
+.manager-app textarea:focus,
+.menu-app input:focus,
+.menu-app select:focus,
+.menu-app textarea:focus,
+.reports-app input:focus,
+.reports-app select:focus,
+.reports-app textarea:focus,
+.inventory-app input:focus,
+.inventory-app select:focus,
+.inventory-app textarea:focus,
+.reception-app input:focus,
+.reception-app select:focus,
+.reception-app textarea:focus,
+.orders-app input:focus,
+.orders-app select:focus,
+.orders-app textarea:focus {
+    border-color: var(--ops-accent) !important;
+    box-shadow: 0 0 0 3px rgba(201, 101, 62, .14) !important;
+    outline: none;
+}
+
+.manager-app .status-badge,
+.reception-app .status-badge,
+.orders-app .status-badge,
+.manager-app .stock-badge,
+.inventory-app .stock-badge {
+    border: 1px solid currentColor;
+    font-weight: 700;
+    letter-spacing: .02em;
+}
+
+.manager-app .icon-button,
+.menu-app .icon-button,
+.reports-app .icon-button,
+.qr-studio .icon-button,
+.inventory-app .icon-button,
+.reception-app .icon-button,
+.orders-app .icon-button {
+    min-width: 44px;
+    min-height: 44px;
+    border-color: var(--ops-border) !important;
+    background: var(--ops-surface) !important;
+    color: var(--ops-ink-soft) !important;
+}
+
+.manager-app .nav-link,
+.menu-app .nav-link,
+.reports-app .nav-link,
+.qr-studio .nav-link,
+.inventory-app .nav-link,
+.reception-app .nav-link,
+.orders-app .nav-link,
+.mobile-customer-page button,
+.mobile-customer-page a {
+    transition: background-color var(--motion-fast) ease,
+        border-color var(--motion-fast) ease,
+        color var(--motion-fast) ease,
+        box-shadow var(--motion-fast) ease,
+        transform var(--motion-fast) ease;
+}
+
+.manager-app .metric-card,
+.manager-app .welcome-card,
+.reception-app .metric-card,
+.reception-app .order-card,
+.reception-app .table-card,
+.reception-app .service-card,
+.orders-app .order-card,
+.mobile-customer-page .welcome-banner,
+.mobile-customer-page .table-banner,
+.mobile-customer-page .food-card,
+.mobile-customer-page .help-card {
+    animation: dashboard-rise 420ms var(--motion-ease) both;
+}
+
+.manager-app .metric-card:nth-child(2),
+.reception-app .order-card:nth-child(2),
+.orders-app .order-card:nth-child(2),
+.mobile-customer-page .food-card:nth-child(2) {
+    animation-delay: 40ms;
+}
+
+.manager-app .metric-card:nth-child(3),
+.reception-app .order-card:nth-child(3),
+.orders-app .order-card:nth-child(3),
+.mobile-customer-page .food-card:nth-child(3) {
+    animation-delay: 80ms;
+}
+
+.manager-app .metric-card:nth-child(4),
+.reception-app .order-card:nth-child(4),
+.orders-app .order-card:nth-child(4),
+.mobile-customer-page .food-card:nth-child(4) {
+    animation-delay: 120ms;
+}
+
+.mobile-customer-page .cart-bar-button {
+    animation: cart-arrive 360ms var(--motion-ease) both;
+}
+
+@keyframes dashboard-rise {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes cart-arrive {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.manager-app .page-heading h2,
+.menu-app .topbar-title h1,
+.reports-app .topbar-title h1,
+.qr-studio .topbar-title h1,
+.inventory-app .topbar-title h1,
+.reception-app .page-heading h2,
+.orders-app .topbar-title h1,
+.manager-history-view main h2,
+.reception-history-view main h1 {
+    color: var(--ops-ink) !important;
+    font-family: 'Playfair Display SC', Georgia, serif !important;
+    letter-spacing: .01em;
+}
+
+.manager-app .welcome-card,
+.reception-app .page-heading,
+.orders-app .orders-panel-header {
+    border-top: 3px solid var(--ops-accent) !important;
+}
+
+.manager-app .welcome-card {
+    background: var(--ops-sidebar) !important;
+    color: #fffaf2 !important;
+    box-shadow: var(--ops-shadow-strong) !important;
+}
+
+.manager-app .welcome-card h2,
+.manager-app .welcome-card p,
+.manager-app .welcome-card span,
+.manager-history-view .history-hero h2 {
+    color: #fffaf2 !important;
+}
+
+.manager-app .sales-chart,
+.reports-app .sales-chart,
+.reports-app .best-sellers-panel,
+.reports-app .category-panel {
+    background: var(--ops-surface-warm) !important;
+    border-color: var(--ops-border) !important;
+}
+
+.manager-history-view > main > div {
+    width: min(1360px, calc(100% - 48px));
+    margin-right: auto;
+    margin-left: auto;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+}
+
+.reception-history-view main > div.mx-auto {
+    width: min(1360px, calc(100% - 48px));
+    max-width: none !important;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+}
+
+@media (max-width: 900px) {
+    .manager-app .manager-sidebar,
+    .menu-app .menu-sidebar,
+    .reports-app .reports-sidebar,
+    .qr-studio .qr-sidebar,
+    .inventory-app .inventory-sidebar,
+    .reception-app .reception-sidebar,
+    .orders-app .orders-sidebar {
+        width: min(300px, 86vw);
+    }
+
+    .manager-app .manager-main,
+    .menu-app .menu-main,
+    .reports-app .reports-main,
+    .qr-studio .qr-main,
+    .inventory-app .inventory-main,
+    .reception-app .reception-main,
+    .orders-app .orders-main,
+    .manager-history-view > main {
+        margin-left: 0;
+    }
+
+    .manager-app .content-wrap,
+    .menu-app .menu-content,
+    .reports-app .reports-content,
+    .qr-studio .qr-content,
+    .inventory-app .inventory-content,
+    .reception-app .content-wrap,
+    .orders-app .orders-content,
+    .manager-history-view > main > section,
+    .reception-history-view main > section {
+        width: min(calc(100% - 32px), 760px);
+    }
+
+    .manager-history-view > aside {
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        border-right: 0 !important;
+        border-bottom: 1px solid rgba(255, 249, 239, .10) !important;
+    }
+
+    .manager-history-view > main > div,
+    .reception-history-view main > div.mx-auto {
+        width: min(calc(100% - 32px), 760px);
+    }
+
+    .manager-history-view .sidebar-close {
+        display: none !important;
+    }
+
+    .manager-history-view > main > header {
+        padding-right: 16px !important;
+        padding-left: 16px !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
+}

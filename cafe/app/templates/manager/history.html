@@ -1,0 +1,1412 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Order History · Himalayan Bites
+{% endblock %}
+
+{% macro icon(name, size=20) %}
+    {% if name == 'menu' %}
+        <svg width="{{ size }}" height="{{ size }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+    {% elif name == 'history' %}
+        <svg width="{{ size }}" height="{{ size }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.5" />
+            <path d="M4 4v4.5h4.5M12 7v5l3 2" />
+        </svg>
+    {% elif name == 'filter' %}
+        <svg width="{{ size }}" height="{{ size }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <path d="M4 6h16M7 12h10M10 18h4" />
+        </svg>
+    {% elif name == 'search' %}
+        <svg width="{{ size }}" height="{{ size }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="6.5" />
+            <path d="m16 16 4 4" />
+        </svg>
+    {% elif name == 'arrow' %}
+        <svg width="{{ size }}" height="{{ size }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 12h13M13 6l6 6-6 6" />
+        </svg>
+    {% elif name == 'close' %}
+        <svg width="{{ size }}" height="{{ size }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <path d="m6 6 12 12M18 6 6 18" />
+        </svg>
+    {% elif name == 'orders' %}
+        <svg width="{{ size }}" height="{{ size }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 3h12v18H6z" />
+            <path d="M9 8h6M9 12h6M9 16h4" />
+        </svg>
+    {% elif name == 'sales' %}
+        <svg width="{{ size }}" height="{{ size }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <path d="M12 3v18" />
+            <path d="M17 7c0-2-2-3-5-3S7 5 7 7s2 3 5 3 5 1 5 3-2 3-5 3-5-1-5-3" />
+        </svg>
+    {% else %}
+        <svg width="{{ size }}" height="{{ size }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="8.5" />
+        </svg>
+    {% endif %}
+{% endmacro %}
+
+{% block content %}
+    {% set manager_page = 'history' %}
+    {% set manager_sidebar_id = 'historySidebar' %}
+    {% set manager_sidebar_class = 'history-sidebar' %}
+
+    <div class="manager-history-view" id="managerHistoryApp">
+        {% include 'partials/manager_sidebar.html' %}
+
+        <main class="history-main">
+            <header class="history-topbar">
+                <div class="history-topbar-left">
+                    <button
+                        class="history-menu-toggle"
+                        id="sidebarOpen"
+                        type="button"
+                        aria-label="Open manager navigation"
+                    >
+                        {{ icon('menu', 21) }}
+                    </button>
+                    <div>
+                        <span class="history-eyebrow">Restaurant operations</span>
+                        <h1>Order history</h1>
+                    </div>
+                </div>
+                <div class="history-profile">
+                    <span class="history-profile-avatar">M</span>
+                    <span>
+                        <strong>Manager</strong>
+                        <small>Administrator</small>
+                    </span>
+                </div>
+            </header>
+
+            <div class="history-content">
+                <section class="history-hero">
+                    <div>
+                        <span class="history-eyebrow history-eyebrow-light">
+                            {{ icon('history', 15) }}
+                            Service archive
+                        </span>
+                        <h2>Every order, clearly accounted for.</h2>
+                        <p>
+                            Review previous restaurant orders, revenue, table context,
+                            and item-level details from one calm workspace.
+                        </p>
+                    </div>
+                    <a class="history-hero-link" href="{{ url_for('manager.dashboard') }}">
+                        Back to dashboard
+                        {{ icon('arrow', 16) }}
+                    </a>
+                </section>
+
+                <section class="history-filter-panel" aria-labelledby="history-filter-title">
+                    <div class="history-section-heading">
+                        <span class="history-icon-tile">{{ icon('filter', 19) }}</span>
+                        <div>
+                            <span class="history-eyebrow">Archive controls</span>
+                            <h2 id="history-filter-title">Filter the service record</h2>
+                        </div>
+                    </div>
+                    <form class="history-filter-form" method="GET" action="{{ url_for('manager.history') }}">
+                        <label>
+                            <span>From date</span>
+                            <input name="start_date" type="date" value="{{ start_date or '' }}">
+                        </label>
+                        <label>
+                            <span>To date</span>
+                            <input name="end_date" type="date" value="{{ end_date or '' }}">
+                        </label>
+                        <button class="history-primary-button" type="submit">
+                            Apply filter
+                            {{ icon('arrow', 15) }}
+                        </button>
+                        <a class="history-secondary-button" href="{{ url_for('manager.history') }}">
+                            Clear
+                        </a>
+                    </form>
+                </section>
+
+                <section class="history-metrics" aria-label="Order history summary">
+                    <article class="history-stat-card">
+                        <span class="history-stat-icon">{{ icon('orders', 18) }}</span>
+                        <div>
+                            <span>Total orders</span>
+                            <strong>{{ total_orders }}</strong>
+                            <small>Orders in this view</small>
+                        </div>
+                    </article>
+                    <article class="history-stat-card history-stat-revenue">
+                        <span class="history-stat-icon">{{ icon('sales', 18) }}</span>
+                        <div>
+                            <span>Total revenue</span>
+                            <strong>Rs. {{ "%.2f" | format(total_revenue | float) }}</strong>
+                            <small>Recorded order value</small>
+                        </div>
+                    </article>
+                    <article class="history-stat-card history-stat-items">
+                        <span class="history-stat-icon">{{ icon('orders', 18) }}</span>
+                        <div>
+                            <span>Items sold</span>
+                            <strong>{{ total_items_sold }}</strong>
+                            <small>Units across all orders</small>
+                        </div>
+                    </article>
+                </section>
+
+                <section class="history-orders-panel" aria-labelledby="history-orders-title">
+                    <div class="history-panel-header">
+                        <div>
+                            <span class="history-eyebrow">Order archive</span>
+                            <h2 id="history-orders-title">Previous orders</h2>
+                            <p>Search the archive or open an order to view its item details.</p>
+                        </div>
+                        <label class="history-search">
+                            <span class="sr-only">Search order history</span>
+                            {{ icon('search', 17) }}
+                            <input id="historySearch" type="search" placeholder="Search order or table" autocomplete="off">
+                        </label>
+                    </div>
+
+                    <div class="history-order-list" id="historyOrderList">
+                        {% for order in orders %}
+                            {% set status = (order.status or 'pending') | lower %}
+                            <article
+                                class="history-order-card"
+                                data-history-order
+                                data-history-search="{{ order.id }} {{ order.order_number or '' }} {{ order.table_name or 'Takeaway' }} {{ status }}"
+                            >
+                                <div class="history-order-header">
+                                    <div class="history-order-identity">
+                                        <span class="history-order-number">#{{ order.order_number or order.id }}</span>
+                                        <div>
+                                            <span class="history-eyebrow">{{ order.table_name or 'Takeaway' }}</span>
+                                            <h3>Order #{{ order.order_number or order.id }}</h3>
+                                        </div>
+                                    </div>
+                                    {% if status in ['served', 'cleared', 'completed'] %}
+                                        <span class="history-status history-status-complete">Completed</span>
+                                    {% elif status in ['cancelled', 'canceled'] %}
+                                        <span class="history-status history-status-cancelled">Cancelled</span>
+                                    {% elif status == 'ready' %}
+                                        <span class="history-status history-status-ready">Ready</span>
+                                    {% elif status == 'preparing' %}
+                                        <span class="history-status history-status-preparing">Preparing</span>
+                                    {% else %}
+                                        <span class="history-status history-status-pending">{{ order.status | default('Pending', true) | capitalize }}</span>
+                                    {% endif %}
+                                </div>
+
+                                <div class="history-order-meta">
+                                    <span>{{ order.created_at }}</span>
+                                    <span>{{ (order.get('items') or []) | length }} item(s)</span>
+                                    <strong>Rs. {{ "%.2f" | format(order.total | float) }}</strong>
+                                </div>
+
+                                <div class="history-order-footer">
+                                    <span>Table: {{ order.table_name or 'Takeaway' }}</span>
+                                    <button
+                                        class="history-detail-button"
+                                        type="button"
+                                        data-open-order
+                                        data-order-title="Order #{{ order.order_number or order.id }}"
+                                        data-order-table="{{ order.table_name or 'Takeaway' }}"
+                                        data-order-date="{{ order.created_at }}"
+                                        data-order-total="Rs. {{ "%.2f" | format(order.total | float) }}"
+                                        data-detail-target="order-detail-{{ order.id }}"
+                                    >
+                                        View details
+                                        {{ icon('arrow', 15) }}
+                                    </button>
+                                </div>
+
+                                <div id="order-detail-{{ order.id }}" class="history-detail-source" hidden>
+                                    {% for item in order.items %}
+                                        <div class="history-detail-line">
+                                            <span>
+                                                <strong>{{ item.name }}</strong>
+                                                <small>{{ item.quantity }} × Rs. {{ "%.2f" | format(item.price_at_order | float) }}</small>
+                                            </span>
+                                            <b>Rs. {{ "%.2f" | format((item.price_at_order * item.quantity) | float) }}</b>
+                                        </div>
+                                    {% else %}
+                                        <p class="history-empty-detail">No item details were recorded.</p>
+                                    {% endfor %}
+                                </div>
+                            </article>
+                        {% else %}
+                            <div class="history-empty-state">
+                                <span class="history-empty-icon">{{ icon('history', 25) }}</span>
+                                <h3>No orders in this archive</h3>
+                                <p>Completed and previous orders will appear here after service.</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <p class="history-no-results" id="historyNoResults" hidden>No orders match your search.</p>
+                </section>
+
+                <footer class="history-footer">
+                    Himalayan Bites <span>•</span> Manager order archive
+                </footer>
+            </div>
+        </main>
+
+        <div class="history-mobile-overlay" id="mobileOverlay"></div>
+    </div>
+
+    <div class="history-modal-backdrop" id="orderModal" hidden>
+        <section class="history-modal" role="dialog" aria-modal="true" aria-labelledby="orderModalTitle">
+            <div class="history-modal-header">
+                <div>
+                    <span class="history-eyebrow">Order details</span>
+                    <h2 id="orderModalTitle">Order</h2>
+                    <p id="orderModalMeta"></p>
+                </div>
+                <button class="history-modal-close" type="button" data-close-order aria-label="Close order details">
+                    {{ icon('close', 19) }}
+                </button>
+            </div>
+            <div class="history-modal-items" id="orderModalItems"></div>
+            <div class="history-modal-total">
+                <span>Total order value</span>
+                <strong id="orderModalTotal">Rs. 0.00</strong>
+            </div>
+        </section>
+    </div>
+{% endblock %}
+
+{% block extra_css %}
+    <style>
+        .manager-history-view {
+            --history-ink: #28231f;
+            --history-muted: #766d63;
+            --history-bg: #f4efe8;
+            --history-surface: #fffdf8;
+            --history-warm: #fbf5ec;
+            --history-border: #e5d9ca;
+            --history-accent: #c9653e;
+            --history-accent-dark: #a94f30;
+            --history-sage: #6d8b73;
+            background: var(--history-bg);
+            color: var(--history-ink);
+        }
+
+        .manager-history-view .manager-sidebar {
+            position: fixed;
+            inset: 0 auto 0 0;
+            z-index: 60;
+            display: flex;
+            width: 258px;
+            height: 100vh;
+            flex-direction: column;
+            padding: 24px 16px 18px;
+            overflow-y: auto;
+            background: #252a25;
+            color: #fffaf2;
+            box-shadow: 12px 0 34px rgba(37, 29, 22, .12);
+        }
+
+        .manager-history-view .sidebar-top,
+        .manager-history-view .sidebar-header {
+            display: flex;
+            min-height: 58px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .manager-history-view .brand-lockup {
+            display: inline-flex;
+            min-width: 0;
+            align-items: center;
+            gap: 11px;
+            color: #fffaf2;
+            text-decoration: none;
+        }
+
+        .manager-history-view .brand-mark {
+            display: inline-flex;
+            width: 43px;
+            height: 43px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 13px;
+            background: #c9653e;
+            color: #fffaf2;
+            font-family: 'Playfair Display SC', Georgia, serif;
+            font-size: 14px;
+            font-weight: 700;
+            box-shadow: 0 8px 18px rgba(201, 101, 62, .24);
+        }
+
+        .manager-history-view .brand-copy {
+            display: grid;
+            min-width: 0;
+            gap: 2px;
+        }
+
+        .manager-history-view .brand-copy strong {
+            color: #fffaf2;
+            font-family: 'Playfair Display SC', Georgia, serif;
+            font-size: 15px;
+            white-space: nowrap;
+        }
+
+        .manager-history-view .brand-copy small {
+            color: rgba(255, 250, 242, .62);
+            font-size: 10px;
+        }
+
+        .manager-history-view .sidebar-close {
+            display: none;
+        }
+
+        .manager-history-view .manager-navigation {
+            display: grid;
+            flex: 1;
+            align-content: start;
+            gap: 7px;
+            margin-top: 30px;
+        }
+
+        .manager-history-view .manager-navigation .nav-label {
+            padding: 0 10px 8px;
+            color: rgba(255, 250, 242, .42);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+        }
+
+        .manager-history-view .manager-navigation .nav-label-spaced {
+            margin-top: 18px;
+        }
+
+        .manager-history-view .manager-navigation .nav-link {
+            display: flex;
+            min-height: 44px;
+            align-items: center;
+            gap: 12px;
+            padding: 0 12px;
+            border: 1px solid transparent;
+            border-radius: 12px;
+            color: rgba(255, 250, 242, .70);
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: background-color .18s ease, border-color .18s ease, color .18s ease, transform .18s ease;
+        }
+
+        .manager-history-view .manager-navigation .nav-link:hover {
+            background: rgba(255, 250, 242, .08);
+            border-color: rgba(255, 250, 242, .10);
+            color: #fffaf2;
+            transform: translateX(2px);
+        }
+
+        .manager-history-view .manager-navigation .nav-link.is-active {
+            background: #c9653e;
+            border-color: rgba(255, 250, 242, .18);
+            color: #fffaf2;
+            box-shadow: 0 8px 18px rgba(201, 101, 62, .22);
+        }
+
+        .manager-history-view .sidebar-footer {
+            margin-top: auto;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 250, 242, .12);
+        }
+
+        .manager-history-view .staff-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px;
+            border: 1px solid rgba(255, 250, 242, .12);
+            border-radius: 13px;
+            background: rgba(255, 250, 242, .07);
+        }
+
+        .manager-history-view .staff-avatar {
+            display: inline-flex;
+            width: 37px;
+            height: 37px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #6d8b73;
+            color: #fffaf2;
+            font-weight: 700;
+        }
+
+        .manager-history-view .staff-card > span:nth-child(2) {
+            display: grid;
+            gap: 2px;
+        }
+
+        .manager-history-view .staff-card strong {
+            color: #fffaf2;
+            font-size: 12px;
+        }
+
+        .manager-history-view .staff-card small {
+            color: rgba(255, 250, 242, .58);
+            font-size: 10px;
+        }
+
+        .manager-history-view .online-dot {
+            width: 8px;
+            height: 8px;
+            margin-left: auto;
+            border-radius: 50%;
+            background: #9bc6a2;
+            box-shadow: 0 0 0 4px rgba(155, 198, 162, .13);
+        }
+
+        .manager-history-view .logout-link {
+            display: flex;
+            min-height: 44px;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+            padding: 0 11px;
+            border-radius: 10px;
+            color: rgba(255, 250, 242, .62);
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .manager-history-view .logout-link:hover {
+            background: rgba(182, 83, 75, .18);
+            color: #ffd5cf;
+        }
+
+        .history-main {
+            min-height: 100vh;
+            margin-left: 258px;
+        }
+
+        .history-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            display: flex;
+            min-height: 82px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 16px clamp(24px, 4vw, 58px);
+            border-bottom: 1px solid var(--history-border);
+            background: rgba(255, 253, 248, .94);
+            backdrop-filter: blur(14px);
+        }
+
+        .history-topbar-left,
+        .history-profile,
+        .history-section-heading,
+        .history-order-identity,
+        .history-order-meta,
+        .history-order-footer,
+        .history-detail-button,
+        .history-search,
+        .history-filter-form,
+        .history-primary-button,
+        .history-secondary-button {
+            display: flex;
+            align-items: center;
+        }
+
+        .history-topbar-left {
+            gap: 13px;
+        }
+
+        .history-topbar h1,
+        .history-hero h2,
+        .history-filter-panel h2,
+        .history-orders-panel h2,
+        .history-modal h2 {
+            margin: 0;
+            color: var(--history-ink);
+            font-family: 'Playfair Display SC', Georgia, serif;
+        }
+
+        .history-topbar h1 {
+            margin-top: 5px;
+            font-size: 21px;
+        }
+
+        .history-menu-toggle,
+        .history-modal-close {
+            display: inline-flex;
+            min-width: 44px;
+            min-height: 44px;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--history-border);
+            border-radius: 12px;
+            background: var(--history-surface);
+            color: var(--history-ink);
+            cursor: pointer;
+        }
+
+        .history-menu-toggle {
+            display: none;
+        }
+
+        .history-profile {
+            gap: 10px;
+            padding-left: 16px;
+            border-left: 1px solid var(--history-border);
+        }
+
+        .history-profile > span:last-child {
+            display: grid;
+            gap: 2px;
+        }
+
+        .history-profile-avatar {
+            display: inline-flex;
+            width: 40px;
+            height: 40px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--history-sage);
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .history-profile strong {
+            font-size: 12px;
+        }
+
+        .history-profile small {
+            color: var(--history-muted);
+            font-size: 10px;
+        }
+
+        .history-content {
+            width: min(1360px, calc(100% - 48px));
+            margin: 0 auto;
+            padding: 34px 0 56px;
+        }
+
+        .history-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--history-accent);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+        }
+
+        .history-eyebrow-light {
+            color: #f7d7c7;
+        }
+
+        .history-hero {
+            display: flex;
+            min-height: 190px;
+            align-items: end;
+            justify-content: space-between;
+            gap: 28px;
+            margin-bottom: 20px;
+            padding: 30px clamp(24px, 4vw, 44px);
+            border: 1px solid rgba(255, 250, 242, .12);
+            border-radius: 20px;
+            background: var(--ops-sidebar, #252a25);
+            color: #fffaf2;
+            box-shadow: 0 18px 40px rgba(67, 48, 33, .14);
+        }
+
+        .manager-history-view .history-hero h2 {
+            max-width: 720px;
+            margin-top: 11px;
+            color: #fffaf2 !important;
+            font-size: clamp(28px, 4vw, 44px);
+            line-height: 1.06;
+        }
+
+        .history-hero p {
+            max-width: 650px;
+            margin: 10px 0 0;
+            color: rgba(255, 250, 242, .70);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .history-hero-link,
+        .history-detail-button,
+        .history-primary-button,
+        .history-secondary-button {
+            gap: 7px;
+            min-height: 44px;
+            justify-content: center;
+            border-radius: 11px;
+            font-size: 11px;
+            font-weight: 800;
+            text-decoration: none;
+            transition: background-color .18s ease, border-color .18s ease, color .18s ease, transform .18s ease;
+        }
+
+        .history-hero-link {
+            flex: 0 0 auto;
+            padding: 0 15px;
+            border: 1px solid rgba(255, 250, 242, .20);
+            color: #fffaf2;
+        }
+
+        .history-hero-link:hover,
+        .history-detail-button:hover,
+        .history-primary-button:hover,
+        .history-secondary-button:hover {
+            transform: translateY(-1px);
+        }
+
+        .history-hero-link:hover {
+            background: rgba(255, 250, 242, .10);
+        }
+
+        .history-filter-panel,
+        .history-orders-panel {
+            border: 1px solid var(--history-border);
+            border-radius: 17px;
+            background: var(--history-surface);
+            box-shadow: 0 12px 28px rgba(67, 48, 33, .06);
+        }
+
+        .history-filter-panel {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 22px;
+            margin-bottom: 16px;
+            padding: 18px 20px;
+        }
+
+        .history-section-heading {
+            gap: 11px;
+        }
+
+        .history-icon-tile,
+        .history-stat-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 11px;
+            background: var(--history-warm);
+            color: var(--history-accent);
+        }
+
+        .history-icon-tile {
+            width: 40px;
+            height: 40px;
+        }
+
+        .history-filter-panel h2 {
+            margin-top: 5px;
+            font-size: 17px;
+        }
+
+        .history-filter-form {
+            flex-wrap: wrap;
+            justify-content: end;
+            gap: 8px;
+        }
+
+        .history-filter-form label {
+            display: grid;
+            min-width: 150px;
+            gap: 6px;
+        }
+
+        .history-filter-form label span {
+            color: var(--history-muted);
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .history-filter-form input,
+        .history-search input {
+            min-height: 42px;
+            border: 1px solid var(--history-border);
+            border-radius: 10px;
+            background: #fffefa;
+            color: var(--history-ink);
+            font: inherit;
+            font-size: 11px;
+            outline: 0;
+        }
+
+        .history-filter-form input {
+            padding: 0 10px;
+        }
+
+        .history-filter-form input:focus,
+        .history-search:focus-within {
+            border-color: var(--history-accent);
+            box-shadow: 0 0 0 3px rgba(201, 101, 62, .14);
+        }
+
+        .history-primary-button,
+        .history-secondary-button {
+            padding: 0 14px;
+        }
+
+        .history-primary-button {
+            border: 1px solid var(--history-accent);
+            background: var(--history-accent);
+            color: #fffaf2;
+            cursor: pointer;
+        }
+
+        .history-primary-button:hover {
+            background: var(--history-accent-dark);
+        }
+
+        .history-secondary-button {
+            border: 1px solid var(--history-border);
+            background: var(--history-surface);
+            color: var(--history-muted);
+        }
+
+        .history-secondary-button:hover {
+            border-color: var(--history-accent);
+            color: var(--history-accent);
+        }
+
+        .history-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .history-stat-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+            padding: 17px;
+            border: 1px solid var(--history-border);
+            border-radius: 15px;
+            background: var(--history-surface);
+            box-shadow: 0 10px 22px rgba(67, 48, 33, .05);
+        }
+
+        .history-stat-icon {
+            width: 40px;
+            height: 40px;
+            flex: 0 0 auto;
+        }
+
+        .history-stat-card div {
+            display: grid;
+            min-width: 0;
+            gap: 4px;
+        }
+
+        .history-stat-card div > span,
+        .history-stat-card small {
+            color: var(--history-muted);
+            font-size: 10px;
+        }
+
+        .history-stat-card strong {
+            overflow: hidden;
+            color: var(--history-ink);
+            font-family: 'Playfair Display SC', Georgia, serif;
+            font-size: 24px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .history-stat-revenue .history-stat-icon {
+            color: var(--history-accent);
+        }
+
+        .history-stat-items .history-stat-icon {
+            color: var(--history-sage);
+        }
+
+        .history-orders-panel {
+            padding: 21px;
+        }
+
+        .history-panel-header {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 18px;
+        }
+
+        .history-orders-panel h2 {
+            margin-top: 6px;
+            font-size: 25px;
+        }
+
+        .history-panel-header p {
+            margin: 5px 0 0;
+            color: var(--history-muted);
+            font-size: 11px;
+        }
+
+        .history-search {
+            width: min(100%, 260px);
+            gap: 8px;
+            padding: 0 11px;
+            border: 1px solid var(--history-border);
+            border-radius: 10px;
+            color: var(--history-muted);
+        }
+
+        .history-search input {
+            width: 100%;
+            min-height: 40px;
+            padding: 0;
+            border: 0;
+            background: transparent;
+        }
+
+        .history-search input:focus {
+            box-shadow: none;
+        }
+
+        .history-order-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .history-order-card {
+            padding: 17px;
+            border: 1px solid var(--history-border);
+            border-radius: 14px;
+            background: var(--history-warm);
+            transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+        }
+
+        .history-order-card:hover {
+            border-color: rgba(201, 101, 62, .46);
+            box-shadow: 0 12px 24px rgba(67, 48, 33, .08);
+            transform: translateY(-1px);
+        }
+
+        .history-order-header {
+            display: flex;
+            align-items: start;
+            justify-content: space-between;
+            gap: 14px;
+        }
+
+        .history-order-identity {
+            min-width: 0;
+            gap: 11px;
+        }
+
+        .history-order-number {
+            display: inline-flex;
+            width: 40px;
+            height: 40px;
+            flex: 0 0 auto;
+            align-items: center;
+            justify-content: center;
+            border-radius: 11px;
+            background: var(--ops-sidebar, #252a25);
+            color: #fffaf2;
+            font-family: 'Playfair Display SC', Georgia, serif;
+            font-size: 12px;
+        }
+
+        .history-order-identity h3 {
+            margin: 4px 0 0;
+            color: var(--history-ink);
+            font-family: 'Playfair Display SC', Georgia, serif;
+            font-size: 17px;
+        }
+
+        .history-status {
+            min-height: 28px;
+            padding: 6px 10px;
+            border: 1px solid currentColor;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .history-status-complete {
+            color: #52735b;
+            background: #edf5ed;
+        }
+
+        .history-status-cancelled {
+            color: #9d4c47;
+            background: #fcedeb;
+        }
+
+        .history-status-ready {
+            color: #986a23;
+            background: #fff5dc;
+        }
+
+        .history-status-preparing,
+        .history-status-pending {
+            color: #a76039;
+            background: #fff0e8;
+        }
+
+        .history-order-meta,
+        .history-order-footer {
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .history-order-meta {
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 1px solid var(--history-border);
+            color: var(--history-muted);
+            font-size: 10px;
+        }
+
+        .history-order-meta strong {
+            color: var(--history-accent);
+            font-family: 'Playfair Display SC', Georgia, serif;
+            font-size: 16px;
+        }
+
+        .history-order-footer {
+            margin-top: 13px;
+            color: var(--history-muted);
+            font-size: 10px;
+        }
+
+        .history-detail-button {
+            min-height: 36px;
+            padding: 0 10px;
+            border: 1px solid var(--history-border);
+            background: var(--history-surface);
+            color: var(--history-accent);
+            cursor: pointer;
+        }
+
+        .history-detail-button:hover {
+            border-color: var(--history-accent);
+            background: #fffaf2;
+        }
+
+        .history-empty-state {
+            padding: 52px 20px;
+            border: 1px dashed var(--history-border);
+            border-radius: 14px;
+            color: var(--history-muted);
+            text-align: center;
+        }
+
+        .history-empty-icon {
+            display: inline-flex;
+            width: 48px;
+            height: 48px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            background: var(--history-warm);
+            color: var(--history-accent);
+        }
+
+        .history-empty-state h3 {
+            margin: 13px 0 4px;
+            color: var(--history-ink);
+            font-family: 'Playfair Display SC', Georgia, serif;
+            font-size: 18px;
+        }
+
+        .history-empty-state p {
+            margin: 0;
+            font-size: 11px;
+        }
+
+        .history-no-results {
+            margin: 14px 0 0;
+            color: var(--history-muted);
+            font-size: 11px;
+            text-align: center;
+        }
+
+        .history-footer {
+            padding: 22px 0 0;
+            color: var(--history-muted);
+            font-size: 10px;
+            letter-spacing: .12em;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .history-footer span {
+            margin: 0 8px;
+            color: var(--history-accent);
+        }
+
+        .history-modal-backdrop {
+            position: fixed;
+            z-index: 100;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            padding: 20px;
+            background: rgba(37, 31, 25, .54);
+        }
+
+        .history-modal-backdrop[hidden] {
+            display: none;
+        }
+
+        .history-modal {
+            width: min(100%, 560px);
+            max-height: min(80vh, 680px);
+            overflow: auto;
+            padding: 22px;
+            border: 1px solid var(--history-border);
+            border-radius: 18px;
+            background: var(--history-surface);
+            box-shadow: 0 24px 60px rgba(37, 31, 25, .24);
+        }
+
+        .history-modal-header {
+            display: flex;
+            align-items: start;
+            justify-content: space-between;
+            gap: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--history-border);
+        }
+
+        .history-modal h2 {
+            margin-top: 6px;
+            font-size: 24px;
+        }
+
+        .history-modal-header p {
+            margin: 5px 0 0;
+            color: var(--history-muted);
+            font-size: 11px;
+        }
+
+        .history-modal-items {
+            display: grid;
+            gap: 0;
+            padding: 8px 0;
+        }
+
+        .history-detail-line {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 13px 0;
+            border-bottom: 1px solid var(--history-border);
+        }
+
+        .history-detail-line > span {
+            display: grid;
+            gap: 4px;
+        }
+
+        .history-detail-line strong {
+            color: var(--history-ink);
+            font-size: 12px;
+        }
+
+        .history-detail-line small {
+            color: var(--history-muted);
+            font-size: 10px;
+        }
+
+        .history-detail-line b {
+            color: var(--history-accent);
+            font-family: 'Playfair Display SC', Georgia, serif;
+            font-size: 14px;
+        }
+
+        .history-empty-detail {
+            color: var(--history-muted);
+            font-size: 11px;
+        }
+
+        .history-modal-total {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding-top: 14px;
+            color: var(--history-muted);
+            font-size: 11px;
+        }
+
+        .history-modal-total strong {
+            color: var(--history-accent);
+            font-family: 'Playfair Display SC', Georgia, serif;
+            font-size: 18px;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        @media (max-width: 900px) {
+            .manager-history-view .manager-sidebar {
+                width: min(300px, 86vw);
+                transform: translateX(-105%);
+                transition: transform .22s ease;
+            }
+
+            .manager-history-view .manager-sidebar.is-open {
+                transform: translateX(0);
+            }
+
+            .manager-history-view .sidebar-close {
+                display: inline-flex;
+                min-width: 44px;
+                min-height: 44px;
+                align-items: center;
+                justify-content: center;
+                border: 1px solid rgba(255, 250, 242, .18);
+                border-radius: 11px;
+                background: transparent;
+                color: #fffaf2;
+            }
+
+            .history-main {
+                margin-left: 0;
+            }
+
+            .history-menu-toggle {
+                display: inline-flex;
+            }
+
+            .history-mobile-overlay {
+                position: fixed;
+                z-index: 50;
+                inset: 0;
+                display: none;
+                background: rgba(37, 31, 25, .54);
+            }
+
+            .history-mobile-overlay.is-visible {
+                display: block;
+            }
+
+            .history-content {
+                width: min(calc(100% - 32px), 760px);
+            }
+
+            .history-filter-panel,
+            .history-panel-header,
+            .history-hero {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .history-filter-form {
+                justify-content: stretch;
+            }
+
+            .history-filter-form label,
+            .history-primary-button,
+            .history-secondary-button {
+                flex: 1 1 140px;
+            }
+        }
+
+        @media (max-width: 620px) {
+            .history-topbar {
+                padding: 13px 16px;
+            }
+
+            .history-profile {
+                padding-left: 0;
+                border-left: 0;
+            }
+
+            .history-profile > span:last-child {
+                display: none;
+            }
+
+            .history-content {
+                padding-top: 20px;
+            }
+
+            .history-hero {
+                min-height: 0;
+                padding: 24px 20px;
+            }
+
+            .history-hero h2 {
+                font-size: 30px;
+            }
+
+            .history-metrics {
+                grid-template-columns: 1fr;
+            }
+
+            .history-orders-panel {
+                padding: 16px;
+            }
+
+            .history-order-header,
+            .history-order-meta,
+            .history-order-footer {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .history-status {
+                align-self: flex-start;
+            }
+
+            .history-search {
+                width: 100%;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .history-order-card,
+            .history-hero-link,
+            .history-detail-button,
+            .history-primary-button,
+            .history-secondary-button {
+                transition: none;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        (function () {
+            const sidebar = document.getElementById('historySidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            const openButton = document.getElementById('sidebarOpen');
+            const closeButton = document.getElementById('sidebarClose');
+            const searchInput = document.getElementById('historySearch');
+            const noResults = document.getElementById('historyNoResults');
+            const orderCards = Array.from(document.querySelectorAll('[data-history-order]'));
+            const modal = document.getElementById('orderModal');
+            const modalTitle = document.getElementById('orderModalTitle');
+            const modalMeta = document.getElementById('orderModalMeta');
+            const modalItems = document.getElementById('orderModalItems');
+            const modalTotal = document.getElementById('orderModalTotal');
+
+            function setSidebar(open) {
+                if (!sidebar || !overlay) {
+                    return;
+                }
+                sidebar.classList.toggle('is-open', open);
+                overlay.classList.toggle('is-visible', open);
+                document.body.classList.toggle('drawer-open', open);
+            }
+
+            function filterOrders() {
+                const query = searchInput
+                    ? searchInput.value.trim().toLowerCase()
+                    : '';
+                let visible = 0;
+                orderCards.forEach(function (card) {
+                    const matches = !query || card.dataset.historySearch.toLowerCase().includes(query);
+                    card.hidden = !matches;
+                    if (matches) {
+                        visible += 1;
+                    }
+                });
+                if (noResults) {
+                    noResults.hidden = visible !== 0 || orderCards.length === 0;
+                }
+            }
+
+            function closeOrder() {
+                if (!modal) {
+                    return;
+                }
+                modal.hidden = true;
+                document.body.classList.remove('modal-open');
+            }
+
+            function openOrder(button) {
+                const detailSource = document.getElementById(button.dataset.detailTarget);
+                if (!modal || !detailSource) {
+                    return;
+                }
+                modalTitle.textContent = button.dataset.orderTitle || 'Order details';
+                modalMeta.textContent = [
+                    button.dataset.orderTable,
+                    button.dataset.orderDate,
+                ].filter(Boolean).join(' · ');
+                modalTotal.textContent = button.dataset.orderTotal || 'Rs. 0.00';
+                modalItems.innerHTML = detailSource.innerHTML;
+                modal.hidden = false;
+                document.body.classList.add('modal-open');
+                const close = modal.querySelector('[data-close-order]');
+                if (close) {
+                    close.focus();
+                }
+            }
+
+            if (openButton) {
+                openButton.addEventListener('click', function () {
+                    setSidebar(true);
+                });
+            }
+            if (closeButton) {
+                closeButton.addEventListener('click', function () {
+                    setSidebar(false);
+                });
+            }
+            if (overlay) {
+                overlay.addEventListener('click', function () {
+                    setSidebar(false);
+                });
+            }
+            if (searchInput) {
+                searchInput.addEventListener('input', filterOrders);
+            }
+            document.querySelectorAll('[data-open-order]').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    openOrder(button);
+                });
+            });
+            document.querySelectorAll('[data-close-order]').forEach(function (button) {
+                button.addEventListener('click', closeOrder);
+            });
+            if (modal) {
+                modal.addEventListener('click', function (event) {
+                    if (event.target === modal) {
+                        closeOrder();
+                    }
+                });
+            }
+            document.querySelectorAll('.manager-sidebar a').forEach(function (link) {
+                link.addEventListener('click', function () {
+                    setSidebar(false);
+                });
+            });
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    setSidebar(false);
+                    closeOrder();
+                }
+            });
+        }());
+    </script>
+{% endblock %}

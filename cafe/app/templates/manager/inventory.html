@@ -1,0 +1,2081 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Inventory · Himalayan Bites
+{% endblock %}
+
+{% macro icon(name, size=20) %}
+    {% if name == 'grid' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+        </svg>
+    {% elif name == 'menu' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"
+        >
+            <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+    {% elif name == 'chart' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M4 19V5M4 19h17M7 15l4-4 3 2 5-6" />
+        </svg>
+    {% elif name == 'inventory' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M4 7h16v13H4zM3 4h18v3H3zM9 11h6" />
+        </svg>
+    {% elif name == 'history' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.5" />
+            <path d="M4 4v4.5h4.5M12 7v5l3 2" />
+        </svg>
+    {% elif name == 'qr' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <rect x="4" y="4" width="6" height="6" rx="1" />
+            <rect x="14" y="4" width="6" height="6" rx="1" />
+            <rect x="4" y="14" width="6" height="6" rx="1" />
+            <path d="M14 14h2v2h-2zM18 14h2M14 18h2M18 18h2v2h-2z" />
+        </svg>
+    {% elif name == 'plus' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.9"
+            stroke-linecap="round"
+            aria-hidden="true"
+        >
+            <path d="M12 5v14M5 12h14" />
+        </svg>
+    {% elif name == 'search' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"
+        >
+            <circle cx="11" cy="11" r="6.5" />
+            <path d="m16 16 4 4" />
+        </svg>
+    {% elif name == 'edit' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="m4 16.5-.8 4.3 4.3-.8L19 8.5 15.5 5 4 16.5Z" />
+            <path d="m13.8 6.7 3.5 3.5M15.5 5 17 3.5a1.4 1.4 0 0 1 2 0l1.5 1.5a1.4 1.4 0 0 1 0 2L19 8.5" />
+        </svg>
+    {% elif name == 'archive' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M4 7h16v13H4zM3 4h18v3H3zM9 11h6" />
+        </svg>
+    {% elif name == 'adjust' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"
+        >
+            <path d="M12 5v14M5 12h14" />
+            <circle cx="12" cy="12" r="8.5" />
+        </svg>
+    {% elif name == 'logout' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M10 17l5-5-5-5M15 12H3M21 19V5a2 2 0 0 0-2-2h-6" />
+        </svg>
+    {% elif name == 'close' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"
+        >
+            <path d="m6 6 12 12M18 6 6 18" />
+        </svg>
+    {% elif name == 'check' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="m5 12 4.2 4.2L19 6.5" />
+        </svg>
+    {% else %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"
+        >
+            <circle cx="12" cy="12" r="8.5" />
+        </svg>
+    {% endif %}
+{% endmacro %}
+
+{% block content %}
+    <div class="inventory-app" id="inventoryApp">
+        {% set manager_page = 'inventory' %}
+{% set manager_sidebar_id = 'inventorySidebar' %}
+{% set manager_sidebar_class = 'inventory-sidebar' %}
+{% set manager_navigation_class = 'inventory-navigation' %}
+{% include "partials/manager_sidebar.html" %}
+
+        <main class="inventory-main">
+            <header class="inventory-topbar">
+                <div class="topbar-title">
+                    <button class="menu-toggle" id="sidebarOpen" type="button" aria-label="Open navigation">
+                        {{ icon('menu', 21) }}
+                    </button>
+                    <div>
+                        <span class="eyebrow">Operations control</span>
+                        <h1>Inventory management</h1>
+                    </div>
+                </div>
+                <div class="profile-summary">
+                    <span class="profile-avatar">M</span>
+                    <span>
+                        <strong>Manager</strong>
+                        <small>Administrator</small>
+                    </span>
+                </div>
+            </header>
+
+            <div class="inventory-content">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flash-stack" aria-live="polite">
+                            {% for category, message in messages %}
+                                <div class="flash-message flash-{{ category }}">
+                                    <span>{{ icon('check', 16) }}</span>
+                                    <p>{{ message }}</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <section class="page-intro">
+                    <div>
+                        <span class="eyebrow">Stock visibility</span>
+                        <h2>Know what needs attention before service.</h2>
+                        <p>Track supplies, monitor reorder levels, and keep purchasing decisions in one place.</p>
+                    </div>
+                    <button class="primary-button" type="button" data-scroll-add>
+                        {{ icon('plus', 17) }}
+                        Add inventory item
+                    </button>
+                </section>
+
+                <section class="metric-grid" aria-label="Inventory summary">
+                    <article class="metric-card metric-total">
+                        <div class="metric-card-top">
+                            <span>Active items</span>
+                            <span class="metric-icon">{{ icon('inventory', 19) }}</span>
+                        </div>
+                        <strong>{{ inventory_stats.total_items }}</strong>
+                        <small>Tracked inventory items</small>
+                    </article>
+                    <article class="metric-card metric-low">
+                        <div class="metric-card-top">
+                            <span>Low stock</span>
+                            <span class="metric-icon">{{ icon('adjust', 19) }}</span>
+                        </div>
+                        <strong>{{ inventory_stats.low_stock }}</strong>
+                        <small>At or below reorder level</small>
+                    </article>
+                    <article class="metric-card metric-out">
+                        <div class="metric-card-top">
+                            <span>Out of stock</span>
+                            <span class="metric-icon">{{ icon('warning', 19) }}</span>
+                        </div>
+                        <strong>{{ inventory_stats.out_of_stock }}</strong>
+                        <small>Needs immediate attention</small>
+                    </article>
+                    <article class="metric-card metric-value">
+                        <div class="metric-card-top">
+                            <span>Stock value</span>
+                            <span class="metric-icon">{{ icon('chart', 19) }}</span>
+                        </div>
+                        <strong>Rs. {{ "%.2f" | format(inventory_stats.stock_value | float) }}</strong>
+                        <small>Current stock × unit cost</small>
+                    </article>
+                </section>
+
+                <section class="add-panel" id="add-inventory-form">
+                    <div class="section-heading">
+                        <div>
+                            <span class="eyebrow">Create stock record</span>
+                            <h2>Add inventory item</h2>
+                            <p>Start with the supplies your team checks most often.</p>
+                        </div>
+                        <span class="heading-icon">{{ icon('plus', 20) }}</span>
+                    </div>
+
+                    <form class="inventory-form" method="POST" action="{{ url_for('manager.add_inventory_item') }}">
+                        <div class="form-grid">
+                            <div class="form-field form-field-wide">
+                                <label for="name">Item name</label>
+                                <input id="name" name="name" type="text" placeholder="e.g. Basmati rice" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="unit">Unit</label>
+                                <select id="unit" name="unit">
+                                    <option value="kg">Kilogram (kg)</option>
+                                    <option value="g">Gram (g)</option>
+                                    <option value="litre">Litre</option>
+                                    <option value="ml">Millilitre (ml)</option>
+                                    <option value="unit" selected>Unit</option>
+                                    <option value="pack">Pack</option>
+                                    <option value="box">Box</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label for="current_stock">Current stock</label>
+                                <input
+                                    id="current_stock"
+                                    name="current_stock"
+                                    type="number"
+                                    min="0"
+                                    step="0.01"
+                                    placeholder="0.00"
+                                    required
+                                >
+                            </div>
+                            <div class="form-field">
+                                <label for="reorder_level">Reorder level</label>
+                                <input
+                                    id="reorder_level"
+                                    name="reorder_level"
+                                    type="number"
+                                    min="0"
+                                    step="0.01"
+                                    placeholder="0.00"
+                                    required
+                                >
+                            </div>
+                            <div class="form-field">
+                                <label for="cost_per_unit">Cost per unit</label>
+                                <div class="money-input">
+                                    <span>Rs.</span>
+                                    <input
+                                        id="cost_per_unit"
+                                        name="cost_per_unit"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="0.00"
+                                        required
+                                    >
+                                </div>
+                            </div>
+                            <div class="form-field form-field-wide">
+                                <label for="supplier">Supplier <span>(optional)</span></label>
+                                <input id="supplier" name="supplier" type="text" placeholder="Supplier or vendor name">
+                            </div>
+                            <div class="form-field form-field-full">
+                                <label for="notes">Notes <span>(optional)</span></label>
+                                <textarea
+                                    id="notes"
+                                    name="notes"
+                                    rows="3"
+                                    placeholder="Storage location, preferred brand, or purchasing notes."
+                                ></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-footer">
+                            <p class="form-tip">
+                                Stock is managed manually. Recipe-based automatic deduction can be added later.
+                            </p>
+                            <button class="primary-button" type="submit">
+                                {{ icon('plus', 17) }}
+                                Add item
+                            </button>
+                        </div>
+                    </form>
+                </section>
+
+                <section class="inventory-panel">
+                    <div class="section-heading list-heading">
+                        <div>
+                            <span class="eyebrow">Live stock register</span>
+                            <h2>Current inventory</h2>
+                            <p>Items at or below their reorder level are shown first.</p>
+                        </div>
+                        <span class="item-count">{{ inventory_stats.total_items }} active items</span>
+                    </div>
+
+                    <div class="list-toolbar">
+                        <label class="search-field">
+                            <span class="sr-only">Search inventory</span>
+                            {{ icon('search', 17) }}
+                            <input
+                                id="inventorySearch"
+                                type="search"
+                                placeholder="Search item or supplier"
+                                autocomplete="off"
+                                aria-label="Search inventory"
+                            >
+                        </label>
+                        <label class="filter-field">
+                            <span class="sr-only">Filter inventory</span>
+                            <select id="stockFilter" aria-label="Filter inventory by stock status">
+                                <option value="all">All stock</option>
+                                <option value="attention">Needs attention</option>
+                                <option value="out">Out of stock</option>
+                                <option value="healthy">Healthy stock</option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <div class="inventory-table-wrap">
+                        <table class="inventory-table">
+                            <caption class="sr-only">Current inventory stock register</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Item</th>
+                                    <th scope="col">Stock level</th>
+                                    <th scope="col">Unit cost</th>
+                                    <th scope="col">Supplier</th>
+                                    <th scope="col" class="align-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventoryBody">
+                                {% for item in inventory_items %}
+                                    {% set current = item.current_stock | float %}
+                                    {% set reorder = item.reorder_level | float %}
+                                    {% set stock_status = 'out' if current <= 0 else 'attention' if current <= reorder else 'healthy' %}
+                                    {% set stock_percent = (current / reorder * 100) if reorder > 0 else 100 %}
+                                    {% if stock_percent > 100 %}
+                                        {% set stock_percent = 100 %}
+                                    {% endif %}
+                                    <tr
+                                        data-inventory-row
+                                        data-search="{{ item.name | lower }} {{ item.supplier | default('', true) | lower }}"
+                                        data-status="{{ stock_status }}"
+                                    >
+                                        <td>
+                                            <div class="item-cell">
+                                                <span class="item-icon">{{ icon('inventory', 17) }}</span>
+                                                <span>
+                                                    <strong>{{ item.name }}</strong>
+                                                    <small>{{ item.unit }} · Reorder at {{ "%.2f" | format(reorder) }}</small>
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="stock-cell">
+                                                <div class="stock-row">
+                                                    <strong>{{ "%.2f" | format(current) }} {{ item.unit }}</strong>
+                                                    {% if stock_status == 'out' %}
+                                                        <span class="stock-badge stock-out">Out of stock</span>
+                                                    {% elif stock_status == 'attention' %}
+                                                        <span class="stock-badge stock-low">Reorder soon</span>
+                                                    {% else %}
+                                                        <span class="stock-badge stock-healthy">Healthy</span>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="stock-track">
+                                                    <span
+                                                        class="stock-fill stock-{{ stock_status }}"
+                                                        data-stock-percent="{{ stock_percent }}"
+                                                    ></span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <strong class="unit-cost">Rs. {{ "%.2f" | format(item.cost_per_unit | float) }}</strong>
+                                            <small class="cell-note">per {{ item.unit }}</small>
+                                        </td>
+                                        <td>
+                                            <span class="supplier-name">{{ item.supplier or 'Not provided' }}</span>
+                                        </td>
+                                        <td class="align-right">
+                                            <div class="row-actions">
+                                                <button
+                                                    class="table-button table-button-adjust"
+                                                    type="button"
+                                                    data-adjust-item
+                                                    data-item-name="{{ item.name }}"
+                                                    data-adjust-url="{{ url_for('manager.adjust_inventory', item_id=item.id) }}"
+                                                >
+                                                    {{ icon('adjust', 15) }}
+                                                    Adjust
+                                                </button>
+                                                <button
+                                                    class="table-button table-button-edit"
+                                                    type="button"
+                                                    data-edit-item
+                                                    data-edit-url="{{ url_for('manager.update_inventory_item', item_id=item.id) }}"
+                                                    data-item-name="{{ item.name }}"
+                                                    data-item-unit="{{ item.unit }}"
+                                                    data-item-stock="{{ item.current_stock }}"
+                                                    data-item-reorder="{{ item.reorder_level }}"
+                                                    data-item-cost="{{ item.cost_per_unit }}"
+                                                    data-item-supplier="{{ item.supplier or '' }}"
+                                                    data-item-notes="{{ item.notes or '' }}"
+                                                >
+                                                    {{ icon('edit', 15) }}
+                                                    Edit
+                                                </button>
+                                                <form
+                                                    method="POST"
+                                                    action="{{ url_for('manager.archive_inventory_item', item_id=item.id) }}"
+                                                    data-archive-form
+                                                >
+                                                    <button class="table-button table-button-archive" type="submit">
+                                                        {{ icon('archive', 15) }}
+                                                        Archive
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="5">
+                                            <div class="empty-state">
+                                                <span class="empty-icon">{{ icon('inventory', 26) }}</span>
+                                                <strong>No inventory items yet</strong>
+                                                <small>Add your first stock record above.</small>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <p
+                        class="no-results"
+                        id="inventoryNoResults"
+                        hidden
+                    >
+                        No inventory items match your search.
+                    </p>
+                </section>
+
+                <footer class="page-footer">
+                    Restaurant Management System
+                    <span>•</span>
+                    Inventory Management
+                </footer>
+            </div>
+        </main>
+
+        <div class="mobile-overlay" id="mobileOverlay"></div>
+
+        <div class="modal-backdrop" id="adjustModal" hidden>
+            <section
+                class="small-modal"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="adjustModalTitle"
+            >
+                <div class="modal-header">
+                    <div>
+                        <span class="eyebrow">Stock movement</span>
+                        <h2 id="adjustModalTitle">Adjust stock</h2>
+                        <p id="adjustItemName"></p>
+                    </div>
+                    <button
+                        class="modal-close"
+                        type="button"
+                        data-close-adjust
+                        aria-label="Close stock adjustment dialog"
+                    >
+                        {{ icon('close', 19) }}
+                    </button>
+                </div>
+                <form class="modal-form" id="adjustForm" method="POST">
+                    <div class="form-field">
+                        <label for="adjustment">Adjustment amount</label>
+                        <input
+                            id="adjustment"
+                            name="adjustment"
+                            type="number"
+                            step="0.01"
+                            placeholder="Use a negative number to remove stock"
+                            required
+                        >
+                        <small class="field-help">Example: 10 adds stock; -2 removes stock.</small>
+                    </div>
+                    <div class="form-field">
+                        <label for="reason">Reason</label>
+                        <input id="reason" name="reason" type="text" placeholder="Delivery, waste, count correction">
+                    </div>
+                    <button class="primary-button" type="submit">
+                        {{ icon('check', 17) }}
+                        Save adjustment
+                    </button>
+                </form>
+            </section>
+        </div>
+
+        <div class="modal-backdrop" id="editModal" hidden>
+            <section class="edit-modal" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
+                <div class="modal-header">
+                    <div>
+                        <span class="eyebrow">Update stock record</span>
+                        <h2 id="editModalTitle">Edit inventory item</h2>
+                    </div>
+                    <button class="modal-close" type="button" data-close-edit aria-label="Close edit dialog">
+                        {{ icon('close', 19) }}
+                    </button>
+                </div>
+                <form class="inventory-form modal-form" id="editInventoryForm" method="POST">
+                    <div class="form-grid">
+                        <div class="form-field form-field-wide">
+                            <label for="editName">Item name</label>
+                            <input id="editName" name="name" type="text" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="editUnit">Unit</label>
+                            <select id="editUnit" name="unit">
+                                <option value="kg">Kilogram (kg)</option>
+                                <option value="g">Gram (g)</option>
+                                <option value="litre">Litre</option>
+                                <option value="ml">Millilitre (ml)</option>
+                                <option value="unit">Unit</option>
+                                <option value="pack">Pack</option>
+                                <option value="box">Box</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label for="editStock">Current stock</label>
+                            <input id="editStock" name="current_stock" type="number" min="0" step="0.01" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="editReorder">Reorder level</label>
+                            <input id="editReorder" name="reorder_level" type="number" min="0" step="0.01" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="editCost">Cost per unit</label>
+                            <div class="money-input">
+                                <span>Rs.</span>
+                                <input id="editCost" name="cost_per_unit" type="number" min="0" step="0.01" required>
+                            </div>
+                        </div>
+                        <div class="form-field form-field-wide">
+                            <label for="editSupplier">Supplier <span>(optional)</span></label>
+                            <input id="editSupplier" name="supplier" type="text">
+                        </div>
+                        <div class="form-field form-field-full">
+                            <label for="editNotes">Notes <span>(optional)</span></label>
+                            <textarea id="editNotes" name="notes" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <button class="primary-button" type="submit">
+                        {{ icon('check', 17) }}
+                        Save changes
+                    </button>
+                </form>
+            </section>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_css %}
+    <style>
+        @import url(
+            'https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600;700&display=swap'
+        );
+
+        :root {
+            --navy-900: #14213D;
+            --green-700: #176B4D;
+            --green-100: #EAF5EF;
+            --blue-700: #2F5D8C;
+            --blue-100: #EAF2FA;
+            --amber-700: #A16207;
+            --amber-100: #FFF5DB;
+            --red-600: #C94E42;
+            --red-100: #FCEBE8;
+            --ink: #26352F;
+            --muted: #718078;
+            --background: #F5F8FB;
+            --surface: #FFF;
+            --border: #DCE5EE;
+            --font-display: 'Fira Code', monospace;
+            --font-body: 'Fira Sans', system-ui, sans-serif;
+            --shadow-small: 0 8px 24px rgba(20, 33, 61, .06);
+            --shadow-medium: 0 18px 44px rgba(20, 33, 61, .13);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: var(--background);
+            color: var(--ink);
+            font-family: var(--font-body);
+        }
+
+        body.drawer-open,
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        :is(a, button, input, select, textarea):focus-visible {
+            outline: 3px solid rgba(47, 93, 140, .30);
+            outline-offset: 3px;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .inventory-app {
+            min-height: 100vh;
+            background: var(--background);
+        }
+
+        .inventory-sidebar {
+            position: fixed;
+            inset: 0 auto 0 0;
+            z-index: 50;
+            display: flex;
+            width: 258px;
+            flex-direction: column;
+            padding: 27px 18px 20px;
+            background: var(--green-700);
+            color: #FFF;
+            box-shadow: 12px 0 38px rgba(20, 33, 61, .14);
+        }
+
+        .sidebar-top,
+        .topbar-title,
+        .profile-summary,
+        .staff-card,
+        .nav-link,
+        .logout-link,
+        .page-intro,
+        .metric-card-top,
+        .section-heading,
+        .form-footer,
+        .list-toolbar,
+        .search-field,
+        .stock-row,
+        .row-actions,
+        .data-note,
+        .modal-header,
+        .page-footer {
+            display: flex;
+        }
+
+        .sidebar-top {
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .brand-lockup {
+            display: inline-flex;
+            min-width: 0;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .brand-mark,
+        .profile-avatar,
+        .staff-avatar {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: 700;
+        }
+
+        .brand-mark {
+            width: 43px;
+            height: 43px;
+            border-radius: 13px;
+            background: #FFF;
+            color: var(--green-700);
+            font-family: var(--font-display);
+            font-size: 14px;
+        }
+
+        .brand-lockup > span:last-child,
+        .staff-card > span:nth-child(2),
+        .profile-summary > span:last-child {
+            display: grid;
+            gap: 2px;
+        }
+
+        .brand-lockup strong {
+            font-family: var(--font-display);
+            font-size: 15px;
+            white-space: nowrap;
+        }
+
+        .brand-lockup small {
+            color: rgba(255, 255, 255, .60);
+            font-size: 10px;
+        }
+
+        .sidebar-close,
+        .menu-toggle {
+            display: none;
+            width: 40px;
+            height: 40px;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            background: transparent;
+            color: currentColor;
+        }
+
+        .inventory-navigation {
+            display: grid;
+            gap: 5px;
+            margin-top: 48px;
+        }
+
+        .nav-label {
+            padding: 0 12px 9px;
+            color: rgba(255, 255, 255, .42);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+        }
+
+        .nav-link {
+            min-height: 47px;
+            align-items: center;
+            gap: 12px;
+            padding: 0 13px;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, .70);
+            font-size: 13px;
+            font-weight: 600;
+            transition: background .2s ease, color .2s ease, transform .2s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, .10);
+            color: #FFF;
+            transform: translateX(2px);
+        }
+
+        .nav-link.is-active {
+            background: #FFF;
+            color: var(--green-700);
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255, 255, 255, .12);
+        }
+
+        .staff-card {
+            align-items: center;
+            gap: 10px;
+            padding: 11px;
+            border-radius: 13px;
+            background: rgba(255, 255, 255, .10);
+        }
+
+        .staff-avatar {
+            width: 37px;
+            height: 37px;
+            background: #FFF;
+            color: var(--green-700);
+        }
+
+        .staff-card strong {
+            font-size: 12px;
+        }
+
+        .staff-card small {
+            color: rgba(255, 255, 255, .52);
+            font-size: 10px;
+        }
+
+        .online-dot {
+            width: 8px;
+            height: 8px;
+            margin-left: auto;
+            border-radius: 50%;
+            background: #86EFAC;
+            box-shadow: 0 0 0 4px rgba(134, 239, 172, .13);
+        }
+
+        .logout-link {
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+            padding: 11px;
+            border-radius: 10px;
+            color: rgba(255, 255, 255, .55);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .logout-link:hover {
+            background: rgba(201, 78, 66, .16);
+            color: #FFD0CA;
+        }
+
+        .inventory-main {
+            min-height: 100vh;
+            margin-left: 258px;
+        }
+
+        .inventory-topbar {
+            display: flex;
+            min-height: 86px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 18px clamp(24px, 4vw, 58px);
+            border-bottom: 1px solid var(--border);
+            background: rgba(255, 255, 255, .92);
+        }
+
+        .topbar-title {
+            align-items: center;
+            gap: 13px;
+        }
+
+        .menu-toggle {
+            color: var(--green-700);
+        }
+
+        .eyebrow {
+            color: var(--green-700);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+        }
+
+        .topbar-title h1 {
+            margin: 5px 0 0;
+            color: var(--navy-900);
+            font-family: var(--font-display);
+            font-size: 21px;
+        }
+
+        .profile-summary {
+            align-items: center;
+            gap: 9px;
+            padding-left: 17px;
+            border-left: 1px solid var(--border);
+        }
+
+        .profile-avatar {
+            width: 39px;
+            height: 39px;
+            background: var(--green-700);
+            color: #FFF;
+        }
+
+        .profile-summary strong {
+            color: var(--navy-900);
+            font-size: 12px;
+        }
+
+        .profile-summary small {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .inventory-content {
+            width: min(1320px, calc(100% - 48px));
+            margin: 0 auto;
+            padding: 42px 0 65px;
+        }
+
+        .flash-stack {
+            display: grid;
+            gap: 9px;
+            margin-bottom: 21px;
+        }
+
+        .flash-message {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 12px 14px;
+            border: 1px solid #CBE8D6;
+            border-radius: 11px;
+            background: #F4FBF6;
+            color: #227549;
+            font-size: 12px;
+        }
+
+        .flash-message p {
+            margin: 0;
+        }
+
+        .flash-danger,
+        .flash-error {
+            border-color: #F1C3C0;
+            background: #FFF7F6;
+            color: var(--red-600);
+        }
+
+        .page-intro {
+            align-items: end;
+            justify-content: space-between;
+            gap: 24px;
+            margin-bottom: 25px;
+        }
+
+        .page-intro h2 {
+            max-width: 680px;
+            margin: 9px 0 7px;
+            color: var(--navy-900);
+            font-family: var(--font-display);
+            font-size: clamp(28px, 4vw, 45px);
+            line-height: 1.08;
+        }
+
+        .page-intro p,
+        .section-heading p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .primary-button {
+            display: inline-flex;
+            min-height: 42px;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 0 15px;
+            border: 1px solid var(--green-700);
+            border-radius: 10px;
+            background: var(--green-700);
+            color: #FFF;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+            transition: background .2s ease, box-shadow .2s ease, transform .2s ease;
+        }
+
+        .primary-button:hover {
+            background: #21825E;
+            box-shadow: 0 8px 17px rgba(23, 107, 77, .18);
+            transform: translateY(-1px);
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 19px;
+        }
+
+        .metric-card {
+            padding: 17px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: var(--surface);
+            box-shadow: var(--shadow-small);
+        }
+
+        .metric-card-top {
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .07em;
+            text-transform: uppercase;
+        }
+
+        .metric-icon,
+        .heading-icon,
+        .item-icon,
+        .empty-icon,
+        .note-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 11px;
+        }
+
+        .metric-icon {
+            width: 36px;
+            height: 36px;
+        }
+
+        .metric-total .metric-icon,
+        .heading-icon,
+        .item-icon,
+        .empty-icon {
+            background: var(--green-100);
+            color: var(--green-700);
+        }
+
+        .metric-low .metric-icon {
+            background: var(--amber-100);
+            color: var(--amber-700);
+        }
+
+        .metric-out .metric-icon {
+            background: var(--red-100);
+            color: var(--red-600);
+        }
+
+        .metric-value .metric-icon {
+            background: var(--blue-100);
+            color: var(--blue-700);
+        }
+
+        .metric-card > strong {
+            display: block;
+            margin-top: 16px;
+            color: var(--navy-900);
+            font-family: var(--font-display);
+            font-size: 22px;
+        }
+
+        .metric-card > small {
+            display: block;
+            margin-top: 7px;
+            color: #8A98A6;
+            font-size: 10px;
+        }
+
+        .add-panel,
+        .inventory-panel {
+            margin-bottom: 19px;
+            padding: 22px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: var(--surface);
+            box-shadow: var(--shadow-small);
+        }
+
+        .section-heading {
+            align-items: start;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-heading h2 {
+            margin: 7px 0 5px;
+            color: var(--navy-900);
+            font-family: var(--font-display);
+            font-size: 19px;
+        }
+
+        .heading-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .inventory-form,
+        .modal-form {
+            display: grid;
+            gap: 18px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .form-field {
+            display: grid;
+            gap: 8px;
+        }
+
+        .form-field-wide,
+        .form-field-full {
+            grid-column: span 2;
+        }
+
+        .form-field label {
+            color: var(--navy-900);
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .form-field label span {
+            color: var(--muted);
+            font-weight: 400;
+        }
+
+        .form-field input,
+        .form-field select,
+        .form-field textarea,
+        .search-field,
+        .filter-field select {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #FBFCFD;
+            color: var(--ink);
+            outline: 0;
+            transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+        }
+
+        .form-field input,
+        .form-field select {
+            min-height: 45px;
+            padding: 0 12px;
+            font-size: 12px;
+        }
+
+        .form-field textarea {
+            min-height: 78px;
+            padding: 12px;
+            resize: vertical;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .form-field input::placeholder,
+        .form-field textarea::placeholder,
+        .search-field input::placeholder {
+            color: #9AA7B2;
+        }
+
+        .form-field input:hover,
+        .form-field select:hover,
+        .form-field textarea:hover,
+        .search-field:hover,
+        .filter-field select:hover {
+            border-color: #B9C9D7;
+            background: #FFF;
+        }
+
+        .form-field input:focus,
+        .form-field select:focus,
+        .form-field textarea:focus,
+        .search-field:focus-within,
+        .filter-field select:focus {
+            border-color: var(--green-700);
+            background: #FFF;
+            box-shadow: 0 0 0 4px rgba(23, 107, 77, .09);
+        }
+
+        .money-input {
+            position: relative;
+        }
+
+        .money-input span {
+            position: absolute;
+            top: 50%;
+            left: 12px;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 700;
+            transform: translateY(-50%);
+        }
+
+        .money-input input {
+            padding-left: 39px;
+        }
+
+        .form-footer {
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #EDF2F5;
+        }
+
+        .form-tip {
+            margin: 0;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .list-heading {
+            align-items: center;
+        }
+
+        .item-count {
+            display: inline-flex;
+            min-height: 30px;
+            align-items: center;
+            padding: 0 10px;
+            border-radius: 999px;
+            background: var(--green-100);
+            color: var(--green-700);
+            font-size: 10px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .list-toolbar {
+            align-items: center;
+            gap: 9px;
+            margin-bottom: 16px;
+        }
+
+        .search-field {
+            display: flex;
+            max-width: 380px;
+            min-height: 42px;
+            align-items: center;
+            gap: 8px;
+            padding: 0 12px;
+            color: #91A0AD;
+        }
+
+        .search-field input {
+            width: 100%;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            color: var(--ink);
+            font-size: 12px;
+        }
+
+        .filter-field {
+            min-width: 150px;
+        }
+
+        .filter-field select {
+            min-height: 42px;
+            padding: 0 11px;
+            font-size: 11px;
+        }
+
+        .inventory-table-wrap {
+            overflow-x: auto;
+        }
+
+        .inventory-table {
+            width: 100%;
+            min-width: 920px;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .inventory-table th {
+            padding: 0 12px 12px;
+            border-bottom: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .10em;
+            text-transform: uppercase;
+        }
+
+        .inventory-table td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #EDF2F5;
+            color: var(--ink);
+            font-size: 12px;
+            vertical-align: middle;
+        }
+
+        .inventory-table th:first-child,
+        .inventory-table td:first-child {
+            padding-left: 0;
+        }
+
+        .inventory-table th:last-child,
+        .inventory-table td:last-child {
+            padding-right: 0;
+        }
+
+        .inventory-table tbody tr {
+            transition: background .2s ease;
+        }
+
+        .inventory-table tbody tr:hover {
+            background: #FBFDFC;
+        }
+
+        .inventory-table tbody tr[hidden] {
+            display: none;
+        }
+
+        .item-cell {
+            display: flex;
+            min-width: 210px;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .item-icon {
+            width: 36px;
+            height: 36px;
+            flex: 0 0 auto;
+        }
+
+        .item-cell > span:last-child {
+            display: grid;
+            gap: 4px;
+        }
+
+        .item-cell strong {
+            color: var(--navy-900);
+            font-size: 12px;
+        }
+
+        .item-cell small,
+        .cell-note {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .stock-cell {
+            min-width: 230px;
+        }
+
+        .stock-row {
+            align-items: center;
+            justify-content: space-between;
+            gap: 9px;
+            margin-bottom: 7px;
+        }
+
+        .stock-row strong,
+        .unit-cost {
+            color: var(--navy-900);
+            font-family: var(--font-display);
+            font-size: 11px;
+        }
+
+        .stock-badge {
+            display: inline-flex;
+            min-height: 22px;
+            align-items: center;
+            padding: 0 7px;
+            border-radius: 999px;
+            font-size: 9px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .stock-healthy {
+            background: var(--green-100);
+            color: var(--green-700);
+        }
+
+        .stock-low {
+            background: var(--amber-100);
+            color: var(--amber-700);
+        }
+
+        .stock-out {
+            background: var(--red-100);
+            color: var(--red-600);
+        }
+
+        .stock-track {
+            height: 7px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: #EDF2F5;
+        }
+
+        .stock-fill {
+            display: block;
+            height: 100%;
+            border-radius: inherit;
+        }
+
+        .stock-fill.stock-healthy {
+            background: var(--green-700);
+        }
+
+        .stock-fill.stock-attention {
+            background: #D49A24;
+        }
+
+        .stock-fill.stock-out {
+            width: 4px !important;
+            background: var(--red-600);
+        }
+
+        .unit-cost,
+        .cell-note,
+        .supplier-name {
+            display: block;
+        }
+
+        .cell-note {
+            margin-top: 4px;
+        }
+
+        .supplier-name {
+            max-width: 145px;
+            overflow: hidden;
+            color: var(--ink);
+            font-size: 11px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .align-right {
+            text-align: right;
+        }
+
+        .row-actions {
+            justify-content: end;
+            gap: 5px;
+        }
+
+        .row-actions form {
+            display: flex;
+        }
+
+        .table-button {
+            display: inline-flex;
+            min-height: 31px;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 0 8px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #FFF;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .table-button-adjust {
+            border-color: #CBE8D6;
+            background: var(--green-100);
+            color: var(--green-700);
+        }
+
+        .table-button-adjust:hover {
+            border-color: var(--green-700);
+        }
+
+        .table-button-edit {
+            color: var(--blue-700);
+        }
+
+        .table-button-edit:hover {
+            border-color: #B7D0E8;
+            background: var(--blue-100);
+        }
+
+        .table-button-archive {
+            color: var(--red-600);
+        }
+
+        .table-button-archive:hover {
+            border-color: #EBC2BD;
+            background: var(--red-100);
+        }
+
+        .empty-state {
+            display: grid;
+            justify-items: center;
+            padding: 50px 18px;
+            border: 1px dashed #C9D7E2;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .inventory-table .empty-state {
+            margin: 12px 0;
+        }
+
+        .empty-icon {
+            width: 52px;
+            height: 52px;
+        }
+
+        .empty-state strong {
+            margin-top: 12px;
+            color: var(--navy-900);
+            font-family: var(--font-display);
+            font-size: 14px;
+        }
+
+        .empty-state small,
+        .no-results {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .no-results {
+            margin-bottom: 0;
+            text-align: center;
+        }
+
+        .page-footer {
+            justify-content: center;
+            gap: 7px;
+            color: #8B99A5;
+            font-size: 11px;
+        }
+
+        .mobile-overlay,
+        .modal-backdrop {
+            display: none;
+        }
+
+        .mobile-overlay.is-visible,
+        .modal-backdrop:not([hidden]) {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-overlay.is-visible {
+            z-index: 40;
+            background: rgba(16, 27, 45, .48);
+        }
+
+        .modal-backdrop {
+            z-index: 90;
+            padding: 20px;
+            background: rgba(16, 27, 45, .58);
+        }
+
+        .small-modal,
+        .edit-modal {
+            width: min(680px, 100%);
+            max-height: calc(100vh - 40px);
+            overflow: auto;
+            padding: 23px;
+            border-radius: 17px;
+            background: #FFF;
+            box-shadow: var(--shadow-medium);
+        }
+
+        .small-modal {
+            width: min(430px, 100%);
+        }
+
+        .modal-header {
+            align-items: start;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 21px;
+        }
+
+        .modal-header h2 {
+            margin: 7px 0 5px;
+            color: var(--navy-900);
+            font-family: var(--font-display);
+            font-size: 20px;
+        }
+
+        .modal-header p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .modal-close {
+            display: inline-flex;
+            width: 37px;
+            height: 37px;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #FFF;
+            color: var(--muted);
+        }
+
+        .modal-close:hover {
+            border-color: #EBC2BD;
+            background: var(--red-100);
+            color: var(--red-600);
+        }
+
+        .field-help {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        @media (max-width: 1100px) {
+            .metric-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .form-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 820px) {
+            .inventory-sidebar {
+                width: 235px;
+            }
+
+            .inventory-main {
+                margin-left: 235px;
+            }
+        }
+
+        @media (max-width: 680px) {
+            .inventory-sidebar {
+                width: min(300px, 86vw);
+                transform: translateX(-105%);
+                transition: transform .25s ease;
+            }
+
+            .inventory-sidebar.is-open {
+                transform: translateX(0);
+            }
+
+            .sidebar-close,
+            .menu-toggle {
+                display: inline-flex;
+            }
+
+            .inventory-main {
+                margin-left: 0;
+            }
+
+            .inventory-topbar {
+                min-height: 76px;
+                padding: 15px 16px;
+            }
+
+            .profile-summary {
+                padding-left: 0;
+                border-left: 0;
+            }
+
+            .profile-summary > span:last-child {
+                display: none;
+            }
+
+            .inventory-content {
+                width: calc(100% - 32px);
+                padding-top: 28px;
+            }
+
+            .page-intro {
+                align-items: start;
+                flex-direction: column;
+            }
+
+            .page-intro .primary-button {
+                width: 100%;
+            }
+
+            .metric-grid {
+                gap: 9px;
+            }
+
+            .metric-card {
+                padding: 14px;
+            }
+
+            .metric-card-top span:first-child {
+                max-width: 85px;
+                font-size: 9px;
+            }
+
+            .add-panel,
+            .inventory-panel {
+                padding: 17px;
+            }
+
+            .section-heading,
+            .list-heading {
+                align-items: start;
+                flex-direction: column;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-field-wide,
+            .form-field-full {
+                grid-column: auto;
+            }
+
+            .form-footer {
+                align-items: start;
+                flex-direction: column;
+            }
+
+            .form-footer .primary-button {
+                width: 100%;
+            }
+
+            .list-toolbar {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .search-field {
+                max-width: none;
+            }
+
+            .filter-field,
+            .filter-field select {
+                width: 100%;
+            }
+
+            .page-footer {
+                flex-wrap: wrap;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .metric-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        (function () {
+            document.querySelectorAll('[data-stock-percent]').forEach(function (bar) {
+                const percent = Number.parseFloat(bar.dataset.stockPercent);
+                if (Number.isFinite(percent)) {
+                    bar.style.width = `${Math.max(0, Math.min(percent, 100))}%`;
+                }
+            });
+            const sidebar = document.getElementById('inventorySidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            const openButton = document.getElementById('sidebarOpen');
+            const closeButton = document.getElementById('sidebarClose');
+            const addButton = document.querySelector('[data-scroll-add]');
+            const addPanel = document.getElementById('add-inventory-form');
+            const searchInput = document.getElementById('inventorySearch');
+            const stockFilter = document.getElementById('stockFilter');
+            const inventoryRows = Array.from(document.querySelectorAll('[data-inventory-row]'));
+            const noResults = document.getElementById('inventoryNoResults');
+            const adjustModal = document.getElementById('adjustModal');
+            const adjustForm = document.getElementById('adjustForm');
+            const adjustItemName = document.getElementById('adjustItemName');
+            const editModal = document.getElementById('editModal');
+            const editForm = document.getElementById('editInventoryForm');
+            const editName = document.getElementById('editName');
+            const editUnit = document.getElementById('editUnit');
+            const editStock = document.getElementById('editStock');
+            const editReorder = document.getElementById('editReorder');
+            const editCost = document.getElementById('editCost');
+            const editSupplier = document.getElementById('editSupplier');
+            const editNotes = document.getElementById('editNotes');
+
+            function setSidebar(open) {
+                if (!sidebar || !overlay) {
+                    return;
+                }
+
+                sidebar.classList.toggle('is-open', open);
+                overlay.classList.toggle('is-visible', open);
+                document.body.classList.toggle('drawer-open', open);
+            }
+
+            function closeModal(modal) {
+                if (!modal || modal.hidden) {
+                    return;
+                }
+
+                modal.hidden = true;
+                document.body.classList.remove('modal-open');
+            }
+
+            function openModal(modal) {
+                if (!modal) {
+                    return;
+                }
+
+                modal.hidden = false;
+                document.body.classList.add('modal-open');
+            }
+
+            if (openButton) {
+                openButton.addEventListener('click', function () {
+                    setSidebar(true);
+                });
+            }
+
+            if (closeButton) {
+                closeButton.addEventListener('click', function () {
+                    setSidebar(false);
+                });
+            }
+
+            if (overlay) {
+                overlay.addEventListener('click', function () {
+                    setSidebar(false);
+                });
+            }
+
+            if (addButton && addPanel) {
+                addButton.addEventListener('click', function () {
+                    addPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    window.setTimeout(function () {
+                        const nameInput = addPanel.querySelector('input[name="name"]');
+                        if (nameInput) {
+                            nameInput.focus();
+                        }
+                    }, 350);
+                });
+            }
+
+            function filterInventory() {
+                const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+                const selectedStatus = stockFilter ? stockFilter.value : 'all';
+                let visibleCount = 0;
+
+                inventoryRows.forEach(function (row) {
+                    const matchesQuery = !query || row.dataset.search.includes(query);
+                    const matchesStatus = selectedStatus === 'all'
+                        || (selectedStatus === 'attention' && row.dataset.status === 'attention')
+                        || (selectedStatus === 'out' && row.dataset.status === 'out')
+                        || (selectedStatus === 'healthy' && row.dataset.status === 'healthy');
+                    const visible = matchesQuery && matchesStatus;
+
+                    row.hidden = !visible;
+                    if (visible) {
+                        visibleCount += 1;
+                    }
+                });
+
+                if (noResults) {
+                    noResults.hidden = visibleCount !== 0 || inventoryRows.length === 0;
+                }
+            }
+
+            if (searchInput) {
+                searchInput.addEventListener('input', filterInventory);
+            }
+
+            if (stockFilter) {
+                stockFilter.addEventListener('change', filterInventory);
+            }
+
+            document.querySelectorAll('[data-adjust-item]').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    adjustForm.action = button.dataset.adjustUrl;
+                    adjustItemName.textContent = button.dataset.itemName;
+                    openModal(adjustModal);
+                    document.getElementById('adjustment').focus();
+                });
+            });
+
+            document.querySelectorAll('[data-edit-item]').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    editForm.action = button.dataset.editUrl;
+                    editName.value = button.dataset.itemName || '';
+                    editUnit.value = button.dataset.itemUnit || 'unit';
+                    editStock.value = button.dataset.itemStock || '';
+                    editReorder.value = button.dataset.itemReorder || '';
+                    editCost.value = button.dataset.itemCost || '';
+                    editSupplier.value = button.dataset.itemSupplier || '';
+                    editNotes.value = button.dataset.itemNotes || '';
+                    openModal(editModal);
+                    editName.focus();
+                });
+            });
+
+            document.querySelectorAll('[data-close-adjust]').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    closeModal(adjustModal);
+                });
+            });
+
+            document.querySelectorAll('[data-close-edit]').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    closeModal(editModal);
+                });
+            });
+
+            [adjustModal, editModal].forEach(function (modal) {
+                if (!modal) {
+                    return;
+                }
+
+                modal.addEventListener('click', function (event) {
+                    if (event.target === modal) {
+                        closeModal(modal);
+                    }
+                });
+            });
+
+            document.querySelectorAll('[data-archive-form]').forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!window.confirm('Archive this inventory item? Its historical movements will be preserved.')) {
+                        event.preventDefault();
+                    }
+                });
+            });
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    setSidebar(false);
+                    closeModal(adjustModal);
+                    closeModal(editModal);
+                }
+            });
+
+            document.querySelectorAll('.inventory-sidebar a').forEach(function (link) {
+                link.addEventListener('click', function () {
+                    setSidebar(false);
+                });
+            });
+        }());
+    </script>
+{% endblock %}

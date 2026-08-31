@@ -1,0 +1,1963 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Manager Dashboard
+{% endblock %}
+
+{% macro icon(name, size=20) %}
+    {% if name == 'grid' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+        </svg>
+    {% elif name == 'menu' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+    {% elif name == 'history' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.5" />
+            <path d="M4 4v4.5h4.5M12 7v5l3 2" />
+        </svg>
+    {% elif name == 'chart' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M4 19V5M4 19h17" />
+            <path d="m7 15 4-4 3 2 5-6" />
+        </svg>
+    {% elif name == 'qr' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <rect x="4" y="4" width="6" height="6" rx="1" />
+            <rect x="14" y="4" width="6" height="6" rx="1" />
+            <rect x="4" y="14" width="6" height="6" rx="1" />
+            <path d="M14 14h2v2h-2zM18 14h2M14 18h2M18 18h2v2h-2z" />
+        </svg>
+    {% elif name == 'logout' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M10 17l5-5-5-5M15 12H3M21 19V5a2 2 0 0 0-2-2h-6" />
+        </svg>
+    {% elif name == 'bell' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+            <path d="M10 21h4" />
+        </svg>
+    {% elif name == 'sales' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M12 3v18" />
+            <path d="M17 7c0-2-2-3-5-3S7 5 7 7s2 3 5 3 5 1 5 3-2 3-5 3-5-1-5-3" />
+        </svg>
+    {% elif name == 'orders' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M6 3h12v18H6z" />
+            <path d="M9 8h6M9 12h6M9 16h4" />
+        </svg>
+    {% elif name == 'items' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M5 11h14M6 11l1 8h10l1-8" />
+            <path d="M9 11V7a3 3 0 0 1 6 0v4" />
+        </svg>
+    {% elif name == 'arrow' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M5 12h13M13 6l6 6-6 6" />
+        </svg>
+    {% elif name == 'download' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M12 4v11M8 11l4 4 4-4M5 20h14" />
+        </svg>
+    {% elif name == 'printer' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M6 9V4h12v5M6 17H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2" />
+            <path d="M6 14h12v6H6z" />
+        </svg>
+    {% elif name == 'search' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"
+        >
+            <circle cx="11" cy="11" r="6.5" />
+            <path d="m16 16 4 4" />
+        </svg>
+    {% elif name == 'close' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"
+        >
+            <path d="m6 6 12 12M18 6 6 18" />
+        </svg>
+    {% else %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"
+        >
+            <circle cx="12" cy="12" r="8.5" />
+        </svg>
+    {% endif %}
+{% endmacro %}
+
+{% block content %}
+    <div class="manager-app" id="managerApp">
+        {% set manager_page = 'dashboard' %}
+{% set manager_sidebar_id = 'managerSidebar' %}
+{% set manager_sidebar_class = 'manager-sidebar' %}
+{% set manager_navigation_class = 'sidebar-nav' %}
+{% include "partials/manager_sidebar.html" %}
+
+        <div class="manager-main">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button
+                        class="icon-button menu-toggle"
+                        id="sidebarOpen"
+                        type="button"
+                        aria-label="Open navigation"
+                    >
+                        {{ icon('menu', 21) }}
+                    </button>
+
+                    <div>
+                        <span class="eyebrow">Restaurant management</span>
+                        <h1>Dashboard overview</h1>
+                    </div>
+                </div>
+
+                <div class="topbar-actions">
+                    <button
+                        class="notification-button"
+                        type="button"
+                        aria-label="Notifications"
+                    >
+                        {{ icon('bell', 19) }}
+                        <span class="notification-dot"></span>
+                    </button>
+
+                    <div class="profile-summary">
+                        <span class="profile-avatar">M</span>
+                        <span>
+                            <strong>Manager</strong>
+                            <small>Administrator</small>
+                        </span>
+                    </div>
+                </div>
+            </header>
+
+            <main class="content-wrap">
+                <section class="welcome-card">
+                    <div class="welcome-copy">
+                        <span class="section-kicker">
+                            <span class="status-pulse"></span>
+                            Restaurant is operating
+                        </span>
+                        <h2>Good day, Manager.</h2>
+                        <p>
+                            Keep an eye on today's revenue, orders, and restaurant
+                            performance from one place.
+                        </p>
+                    </div>
+
+                    <div class="welcome-illustration" aria-hidden="true">
+                        {{ icon('sales', 48) }}
+                    </div>
+                </section>
+
+                <section
+                    class="metric-grid"
+                    aria-label="Today's restaurant performance"
+                >
+                    <article class="metric-card metric-sales">
+                        <div class="metric-card-header">
+                            <span>Today's sales</span>
+                            <span class="metric-icon">{{ icon('sales', 19) }}</span>
+                        </div>
+                        <strong>Rs. {{ "%.2f" | format(today_sales | float) }}</strong>
+                        <small>Cleared restaurant revenue</small>
+                    </article>
+
+                    <article class="metric-card metric-orders">
+                        <div class="metric-card-header">
+                            <span>Today's orders</span>
+                            <span class="metric-icon">{{ icon('orders', 19) }}</span>
+                        </div>
+                        <strong>{{ today_orders }}</strong>
+                        <small>Orders cleared today</small>
+                    </article>
+
+                    <article class="metric-card metric-items">
+                        <div class="metric-card-header">
+                            <span>Items sold</span>
+                            <span class="metric-icon">{{ icon('items', 19) }}</span>
+                        </div>
+                        <strong>{{ today_items }}</strong>
+                        <small>Total items sold today</small>
+                    </article>
+                </section>
+
+                <section class="dashboard-grid">
+                    <article class="panel sales-panel">
+                        <div class="panel-header">
+                            <div>
+                                <span class="section-kicker">Last seven days</span>
+                                <h2>Sales overview</h2>
+                                <p>Cleared sales by calendar day.</p>
+                            </div>
+
+                            <a
+                                class="outline-button"
+                                href="{{ url_for('manager.reports') }}"
+                            >
+                                View reports
+                                {{ icon('arrow', 16) }}
+                            </a>
+                        </div>
+
+                        <div
+                            class="sales-chart"
+                            role="img"
+                            aria-label="Sales chart for the last seven days"
+                        >
+                            {% for point in sales_chart %}
+                                <div class="chart-column">
+                                    <div
+                                        class="chart-bar"
+                                        data-chart-height="{{ point.height }}"
+                                        title="{{ point.date }}: Rs. {{ '%.2f' | format(point.amount | float) }}"
+                                    >
+                                        <span class="chart-tooltip">
+                                            Rs. {{ "%.2f" | format(point.amount | float) }}
+                                        </span>
+                                    </div>
+                                    <span class="chart-label">{{ point.label }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </article>
+
+                    <article class="panel actions-panel">
+                        <div class="panel-header">
+                            <div>
+                                <span class="section-kicker">Shortcuts</span>
+                                <h2>Quick actions</h2>
+                                <p>Common management tasks.</p>
+                            </div>
+                        </div>
+
+                        <div class="quick-actions">
+                            <a
+                                class="quick-action"
+                                href="{{ url_for('manager.menu') }}"
+                            >
+                                <span class="quick-action-icon icon-green">
+                                    {{ icon('menu', 18) }}
+                                </span>
+                                <span>
+                                    <strong>Manage menu</strong>
+                                    <small>Add or edit food items</small>
+                                </span>
+                                {{ icon('arrow', 16) }}
+                            </a>
+
+                            <a
+                                class="quick-action"
+                                href="{{ url_for('manager.history') }}"
+                            >
+                                <span class="quick-action-icon icon-blue">
+                                    {{ icon('history', 18) }}
+                                </span>
+                                <span>
+                                    <strong>Order history</strong>
+                                    <small>Review previous orders</small>
+                                </span>
+                                {{ icon('arrow', 16) }}
+                            </a>
+
+                            <a
+                                class="quick-action"
+                                href="{{ url_for('manager.reports') }}"
+                            >
+                                <span class="quick-action-icon icon-amber">
+                                    {{ icon('chart', 18) }}
+                                </span>
+                                <span>
+                                    <strong>Sales reports</strong>
+                                    <small>Analyze restaurant performance</small>
+                                </span>
+                                {{ icon('arrow', 16) }}
+                            </a>
+                        </div>
+                    </article>
+                </section>
+
+                <section class="panel qr-panel" id="qr-codes">
+                    <div class="panel-header">
+                        <div>
+                            <span class="section-kicker">Table ordering</span>
+                            <h2>Table QR codes</h2>
+                            <p>Print or download the ordering QR code for each table.</p>
+                        </div>
+
+                        <span class="panel-count">
+                            {{ table_qr_codes | length }} tables
+                        </span>
+                    </div>
+
+                    <div class="qr-grid">
+                        {% for qr in table_qr_codes %}
+                            <article class="qr-card">
+                                <div class="qr-image-wrap">
+                                    <img
+                                        src="{{ qr.image_url }}"
+                                        alt="QR code for Table {{ qr.number }}"
+                                        loading="lazy"
+                                    >
+                                </div>
+
+                                <div class="qr-card-footer">
+                                    <strong>Table {{ qr.number }}</strong>
+                                    <span>Scan to open menu</span>
+                                </div>
+
+                                <div class="qr-actions">
+                                    <a
+                                        class="qr-action-button"
+                                        href="{{ qr.download_url }}"
+                                        download
+                                    >
+                                        {{ icon('download', 15) }}
+                                        Download
+                                    </a>
+                                    <button
+                                        class="qr-action-button"
+                                        type="button"
+                                        data-print-qr
+                                        data-image-url="{{ qr.image_url }}"
+                                        data-table-label="Table {{ qr.number }}"
+                                    >
+                                        {{ icon('printer', 15) }}
+                                        Print
+                                    </button>
+                                </div>
+                            </article>
+                        {% else %}
+                            <div class="empty-state">
+                                <span class="empty-icon">{{ icon('qr', 25) }}</span>
+                                <h3>No QR codes available</h3>
+                                <p>Table QR codes will appear here when tables are configured.</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+
+                <section class="panel orders-panel">
+                    <div class="panel-header orders-panel-header">
+                        <div>
+                            <span class="section-kicker">Recent activity</span>
+                            <h2>Recent orders</h2>
+                            <p>The latest orders recorded in the restaurant.</p>
+                        </div>
+
+                        <div class="orders-tools">
+                            <label class="order-search">
+                                <span class="sr-only">Search recent orders</span>
+                                {{ icon('search', 16) }}
+                                <input
+                                    id="recentOrderSearch"
+                                    type="search"
+                                    placeholder="Search orders"
+                                    autocomplete="off"
+                                    aria-label="Search recent orders"
+                                >
+                            </label>
+                            <a
+                                class="outline-button"
+                                href="{{ url_for('manager.history') }}"
+                            >
+                                View all
+                                {{ icon('arrow', 16) }}
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="orders-table-wrap">
+                        <table class="orders-table">
+                            <caption class="sr-only">Recent restaurant orders</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Order</th>
+                                    <th scope="col">Table</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col" class="align-right">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentOrdersBody">
+                                {% for order in recent_orders %}
+                                    {% set status = (order.status or 'pending') | lower %}
+                                    <tr
+                                        data-order-row
+                                        data-order-search="{{ order.id }} {{ order.order_number }} {{ order.table_name }} {{ status }}"
+                                    >
+                                        <td>
+                                            <span class="order-id">#{{ order.order_number or order.id }}</span>
+                                            <small>Restaurant order</small>
+                                        </td>
+                                        <td>{{ order.table_name or 'Takeaway' }}</td>
+                                        <td>{{ order.created_at }}</td>
+                                        <td>
+                                            {% if status in ['cleared', 'completed', 'served'] %}
+                                                <span class="status-badge status-completed">Completed</span>
+                                            {% elif status in ['cancelled', 'canceled'] %}
+                                                <span class="status-badge status-cancelled">Cancelled</span>
+                                            {% elif status in ['placed', 'pending'] %}
+                                                <span class="status-badge status-pending">Pending</span>
+                                            {% elif status == 'preparing' %}
+                                                <span class="status-badge status-preparing">Preparing</span>
+                                            {% elif status == 'ready' %}
+                                                <span class="status-badge status-ready">Ready</span>
+                                            {% else %}
+                                                <span class="status-badge">{{ order.status | capitalize }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="align-right">
+                                            <strong>Rs. {{ "%.2f" | format((order.total or 0) | float) }}</strong>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td class="table-empty" colspan="5">
+                                            <span class="empty-icon">{{ icon('orders', 24) }}</span>
+                                            <strong>No recent orders</strong>
+                                            <small>New restaurant orders will appear here.</small>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="search-empty" id="recentOrdersEmpty" hidden>
+                        No recent orders match your search.
+                    </p>
+                </section>
+
+                <footer class="page-footer">
+                    Restaurant Management System
+                    <span>•</span>
+                    Manager Dashboard
+                </footer>
+            </main>
+        </div>
+
+        <div class="mobile-overlay" id="mobileOverlay"></div>
+    </div>
+{% endblock %}
+
+{% block extra_css %}
+    <style>
+        @import url(
+            'https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600;700&display=swap'
+        );
+
+        :root {
+            --navy-950: #101B2D;
+            --navy-900: #14213D;
+            --navy-800: #1B2A4A;
+            --green-700: #176B4D;
+            --green-100: #EAF5EF;
+            --blue-700: #2F5D8C;
+            --blue-100: #EAF2FA;
+            --amber-700: #A16207;
+            --amber-100: #FFF5DB;
+            --red-600: #C94E42;
+            --red-100: #FCEBE8;
+            --ink: #26352F;
+            --muted: #718078;
+            --background: #F5F8FB;
+            --surface: #FFFFFF;
+            --border: #DCE5EE;
+            --shadow-small: 0 8px 24px rgba(20, 33, 61, .06);
+            --shadow-medium: 0 18px 44px rgba(20, 33, 61, .10);
+            --radius-medium: 15px;
+            --radius-large: 22px;
+            --font-display: 'Fira Code', monospace;
+            --font-body: 'Fira Sans', system-ui, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: var(--background);
+            color: var(--ink);
+            font-family: var(--font-body);
+        }
+
+        body.drawer-open {
+            overflow: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        :is(a, button, input):focus-visible {
+            outline: 3px solid rgba(47, 93, 140, .35);
+            outline-offset: 3px;
+        }
+
+        .manager-app {
+            min-height: 100vh;
+            background: var(--background);
+        }
+
+        .manager-sidebar {
+            position: fixed;
+            inset: 0 auto 0 0;
+            z-index: 60;
+            display: flex;
+            width: 258px;
+            flex-direction: column;
+            padding: 27px 18px 20px;
+            background: var(--green-700);
+            color: #FFF;
+            box-shadow: 12px 0 38px rgba(20, 33, 61, .14);
+        }
+
+        .sidebar-header,
+        .topbar,
+        .topbar-left,
+        .topbar-actions,
+        .profile-summary,
+        .metric-card-header,
+        .panel-header,
+        .orders-panel-header,
+        .orders-tools,
+        .quick-action,
+        .qr-actions,
+        .qr-action-button,
+        .notification-button,
+        .search-box,
+        .order-search,
+        .outline-button,
+        .icon-button,
+        .service-status {
+            display: flex;
+        }
+
+        .sidebar-header {
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .brand-lockup {
+            display: inline-flex;
+            min-width: 0;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .brand-mark {
+            display: inline-flex;
+            width: 43px;
+            height: 43px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 13px;
+            background: #FFF;
+            color: var(--green-700);
+            font-family: var(--font-display);
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: .04em;
+        }
+
+        .brand-copy {
+            display: grid;
+            min-width: 0;
+            gap: 2px;
+        }
+
+        .brand-copy strong {
+            font-family: var(--font-display);
+            font-size: 15px;
+            white-space: nowrap;
+        }
+
+        .brand-copy small {
+            color: rgba(255, 255, 255, .60);
+            font-size: 10px;
+            letter-spacing: .04em;
+        }
+
+        .icon-button {
+            width: 42px;
+            height: 42px;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid transparent;
+            border-radius: 11px;
+            background: transparent;
+            color: currentColor;
+        }
+
+        .icon-button:hover {
+            border-color: rgba(255, 255, 255, .18);
+            background: rgba(255, 255, 255, .10);
+        }
+
+        .sidebar-close,
+        .menu-toggle {
+            display: none;
+        }
+
+        .sidebar-nav {
+            display: grid;
+            gap: 5px;
+            margin-top: 48px;
+        }
+
+        .nav-label {
+            padding: 0 12px 9px;
+            color: rgba(255, 255, 255, .42);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .17em;
+            text-transform: uppercase;
+        }
+
+        .nav-label-spaced {
+            margin-top: 28px;
+        }
+
+        .nav-link {
+            display: flex;
+            min-height: 48px;
+            align-items: center;
+            gap: 12px;
+            padding: 0 13px;
+            border: 1px solid transparent;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, .72);
+            font-size: 13px;
+            font-weight: 600;
+            transition: background .2s ease, color .2s ease, transform .2s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, .10);
+            color: #FFF;
+            transform: translateX(2px);
+        }
+
+        .nav-link.is-active {
+            background: #FFF;
+            color: var(--green-700);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, .12);
+        }
+
+        .nav-link svg {
+            flex: 0 0 auto;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255, 255, 255, .12);
+        }
+
+        .staff-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px;
+            border-radius: 13px;
+            background: rgba(255, 255, 255, .10);
+        }
+
+        .staff-card > span:nth-child(2),
+        .profile-summary > span:last-child {
+            display: grid;
+            gap: 2px;
+        }
+
+        .staff-avatar,
+        .profile-avatar {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: 700;
+        }
+
+        .staff-avatar {
+            width: 37px;
+            height: 37px;
+            background: #FFF;
+            color: var(--green-700);
+        }
+
+        .staff-card strong,
+        .profile-summary strong {
+            font-size: 12px;
+        }
+
+        .staff-card small,
+        .profile-summary small {
+            color: rgba(255, 255, 255, .52);
+            font-size: 10px;
+        }
+
+        .online-dot {
+            width: 8px;
+            height: 8px;
+            margin-left: auto;
+            border-radius: 50%;
+            background: #86EFAC;
+            box-shadow: 0 0 0 4px rgba(134, 239, 172, .13);
+        }
+
+        .logout-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+            padding: 11px;
+            border-radius: 10px;
+            color: rgba(255, 255, 255, .55);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .logout-link:hover {
+            background: rgba(201, 78, 66, .16);
+            color: #FFD0CA;
+        }
+
+        .manager-main {
+            min-height: 100vh;
+            margin-left: 258px;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            min-height: 86px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            padding: 18px clamp(24px, 4vw, 58px);
+            border-bottom: 1px solid var(--border);
+            background: rgba(255, 255, 255, .90);
+            backdrop-filter: blur(16px);
+        }
+
+        .topbar-left {
+            align-items: center;
+            gap: 13px;
+        }
+
+        .topbar-left .icon-button {
+            color: var(--green-700);
+        }
+
+        .eyebrow,
+        .section-kicker {
+            color: var(--green-700);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+        }
+
+        .topbar h1 {
+            margin: 5px 0 0;
+            color: var(--navy-900);
+            font-family: var(--font-display);
+            font-size: 21px;
+            line-height: 1.1;
+        }
+
+        .topbar-actions {
+            align-items: center;
+            gap: 17px;
+        }
+
+        .notification-button {
+            position: relative;
+            width: 42px;
+            height: 42px;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: #FFF;
+            color: var(--navy-900);
+        }
+
+        .notification-button:hover {
+            border-color: var(--green-700);
+            color: var(--green-700);
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 7px;
+            height: 7px;
+            border: 2px solid #FFF;
+            border-radius: 50%;
+            background: var(--red-600);
+        }
+
+        .profile-summary {
+            align-items: center;
+            gap: 9px;
+            padding-left: 17px;
+            border-left: 1px solid var(--border);
+        }
+
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--green-700);
+            color: #FFF;
+        }
+
+        .profile-summary strong {
+            color: var(--navy-900);
+        }
+
+        .profile-summary small {
+            color: #8A98A6;
+        }
+
+        .content-wrap {
+            width: min(1320px, calc(100% - 48px));
+            margin: 0 auto;
+            padding: 42px 0 60px;
+        }
+
+        .welcome-card {
+            position: relative;
+            display: flex;
+            min-height: 225px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            overflow: hidden;
+            margin-bottom: 25px;
+            padding: 34px clamp(25px, 4vw, 48px);
+            border-radius: var(--radius-large);
+            background: linear-gradient(125deg, var(--green-700), #21825E);
+            color: #FFF;
+            box-shadow: var(--shadow-medium);
+        }
+
+        .welcome-card::before,
+        .welcome-card::after {
+            position: absolute;
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 50%;
+            content: '';
+        }
+
+        .welcome-card::before {
+            top: -95px;
+            right: 8%;
+            width: 270px;
+            height: 270px;
+        }
+
+        .welcome-card::after {
+            right: 25%;
+            bottom: -120px;
+            width: 230px;
+            height: 230px;
+        }
+
+        .welcome-copy,
+        .welcome-illustration {
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-copy {
+            max-width: 650px;
+        }
+
+        .welcome-copy .section-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #D6F5E3;
+        }
+
+        .status-pulse {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #86EFAC;
+            box-shadow: 0 0 0 4px rgba(134, 239, 172, .15);
+        }
+
+        .welcome-copy h2 {
+            margin: 15px 0 10px;
+            font-family: var(--font-display);
+            font-size: clamp(28px, 4vw, 46px);
+            line-height: 1.05;
+        }
+
+        .welcome-copy p {
+            max-width: 560px;
+            margin: 0;
+            color: rgba(255, 255, 255, .72);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .welcome-illustration {
+            display: flex;
+            width: 108px;
+            height: 108px;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, .15);
+            border-radius: 25px;
+            background: rgba(255, 255, 255, .10);
+            color: #E1F5E9;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 25px;
+        }
+
+        .metric-card {
+            padding: 19px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-medium);
+            background: var(--surface);
+            box-shadow: var(--shadow-small);
+        }
+
+        .metric-card-header {
+            align-items: center;
+            justify-content: space-between;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .metric-icon,
+        .quick-action-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 11px;
+        }
+
+        .metric-icon {
+            width: 38px;
+            height: 38px;
+        }
+
+        .metric-card > strong {
+            display: block;
+            margin-top: 18px;
+            color: var(--navy-900);
+            font-family: var(--font-display);
+            font-size: 25px;
+            line-height: 1.15;
+        }
+
+        .metric-card > small {
+            display: block;
+            margin-top: 8px;
+            color: #8997A4;
+            font-size: 11px;
+        }
+
+        .metric-sales .metric-icon,
+        .icon-green {
+            background: var(--green-100);
+            color: var(--green-700);
+        }
+
+        .metric-orders .metric-icon,
+        .icon-blue {
+            background: var(--blue-100);
+            color: var(--blue-700);
+        }
+
+        .metric-items .metric-icon,
+        .icon-amber {
+            background: var(--amber-100);
+            color: var(--amber-700);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.6fr) minmax(280px, .9fr);
+            gap: 14px;
+            margin-bottom: 25px;
+        }
+
+        .panel {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-medium);
+            background: var(--surface);
+            box-shadow: var(--shadow-small);
+        }
+
+        .sales-panel,
+        .actions-panel,
+        .qr-panel,
+        .orders-panel {
+            padding: 22px;
+        }
+
+        .panel-header {
+            align-items: start;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 20px;
+        }
+
+        .panel-header h2 {
+            margin: 7px 0 5px;
+            color: var(--navy-900);
+            font-family: var(--font-display);
+            font-size: 19px;
+            line-height: 1.15;
+        }
+
+        .panel-header p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .outline-button {
+            min-height: 39px;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 0 12px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #FFF;
+            color: var(--navy-900);
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+            transition: border-color .2s ease, background .2s ease, color .2s ease;
+        }
+
+        .outline-button:hover {
+            border-color: var(--green-700);
+            background: var(--green-100);
+            color: var(--green-700);
+        }
+
+        .sales-chart {
+            display: flex;
+            height: 220px;
+            align-items: end;
+            gap: 13px;
+            padding: 22px 18px 0;
+            border-radius: 12px;
+            background: linear-gradient(180deg, #FAFCFD, #F4F8FA);
+        }
+
+        .chart-column {
+            display: flex;
+            height: 100%;
+            flex: 1;
+            flex-direction: column;
+            align-items: center;
+            justify-content: end;
+            gap: 9px;
+        }
+
+        .chart-bar {
+            position: relative;
+            width: min(38px, 100%);
+            min-height: 2px;
+            border-radius: 7px 7px 2px 2px;
+            background: linear-gradient(180deg, #21825E, var(--green-700));
+            transition: filter .2s ease, transform .2s ease;
+        }
+
+        .chart-bar:hover {
+            filter: brightness(1.12);
+            transform: translateY(-2px);
+        }
+
+        .chart-tooltip {
+            position: absolute;
+            bottom: calc(100% + 7px);
+            left: 50%;
+            padding: 5px 7px;
+            border-radius: 6px;
+            background: var(--navy-900);
+            color: #FFF;
+            font-size: 10px;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(-50%);
+            transition: opacity .2s ease;
+            white-space: nowrap;
+        }
+
+        .chart-bar:hover .chart-tooltip {
+            opacity: 1;
+        }
+
+        .chart-label {
+            color: var(--muted);
+            font-family: var(--font-display);
+            font-size: 10px;
+        }
+
+        .quick-actions {
+            display: grid;
+            gap: 9px;
+        }
+
+        .quick-action {
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            color: var(--muted);
+            transition: background .2s ease, border-color .2s ease, transform .2s ease;
+        }
+
+        .quick-action:hover {
+            border-color: #B9D8C6;
+            background: #FBFEFC;
+            transform: translateX(2px);
+        }
+
+        .quick-action-icon {
+            width: 38px;
+            height: 38px;
+            flex: 0 0 auto;
+        }
+
+        .quick-action > span:nth-child(2) {
+            display: grid;
+            flex: 1;
+            gap: 3px;
+        }
+
+        .quick-action strong {
+            color: var(--navy-900);
+            font-size: 12px;
+        }
+
+        .quick-action small {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .panel-count {
+            display: inline-flex;
+            min-height: 30px;
+            align-items: center;
+            padding: 0 10px;
+            border-radius: 999px;
+            background: var(--green-100);
+            color: var(--green-700);
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .qr-panel {
+            margin-bottom: 25px;
+        }
+
+        .qr-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 13px;
+        }
+
+        .qr-card {
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: #FBFDFC;
+            transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+        }
+
+        .qr-card:hover {
+            border-color: #B9D8C6;
+            box-shadow: var(--shadow-small);
+            transform: translateY(-2px);
+        }
+
+        .qr-image-wrap {
+            display: flex;
+            aspect-ratio: 1;
+            align-items: center;
+            justify-content: center;
+            padding: 9px;
+            border-radius: 9px;
+            background: #FFF;
+        }
+
+        .qr-image-wrap img {
+            display: block;
+            width: 100%;
+            max-width: 145px;
+            height: auto;
+        }
+
+        .qr-card-footer {
+            display: grid;
+            gap: 3px;
+            margin-top: 12px;
+        }
+
+        .qr-card-footer strong {
+            color: var(--navy-900);
+            font-size: 12px;
+        }
+
+        .qr-card-footer span {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .qr-actions {
+            gap: 6px;
+            margin-top: 12px;
+        }
+
+        .qr-action-button {
+            min-height: 32px;
+            flex: 1;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 0 5px;
+            border: 1px solid #CFE3D6;
+            border-radius: 8px;
+            background: var(--green-100);
+            color: var(--green-700);
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .qr-action-button:hover {
+            border-color: var(--green-700);
+            background: #DDF0E5;
+        }
+
+        .orders-panel {
+            margin-bottom: 25px;
+        }
+
+        .orders-panel-header {
+            align-items: end;
+        }
+
+        .orders-tools {
+            align-items: center;
+            gap: 8px;
+        }
+
+        .order-search,
+        .search-box {
+            min-height: 39px;
+            align-items: center;
+            gap: 7px;
+            padding: 0 10px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: var(--background);
+            color: #94A1AD;
+        }
+
+        .order-search {
+            width: 180px;
+        }
+
+        .order-search input,
+        .search-box input {
+            width: 100%;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            color: var(--ink);
+            font-size: 11px;
+        }
+
+        .order-search input::placeholder,
+        .search-box input::placeholder {
+            color: #94A1AD;
+        }
+
+        .orders-table-wrap {
+            overflow-x: auto;
+        }
+
+        .orders-table {
+            width: 100%;
+            min-width: 700px;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .orders-table th {
+            padding: 0 12px 12px;
+            border-bottom: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .10em;
+            text-transform: uppercase;
+        }
+
+        .orders-table td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #EDF2F5;
+            color: var(--ink);
+            font-size: 12px;
+        }
+
+        .orders-table tbody tr {
+            transition: background .2s ease;
+        }
+
+        .orders-table tbody tr:hover {
+            background: #FBFDFC;
+        }
+
+        .orders-table td:first-child,
+        .orders-table th:first-child {
+            padding-left: 0;
+        }
+
+        .orders-table td:last-child,
+        .orders-table th:last-child {
+            padding-right: 0;
+        }
+
+        .orders-table td:first-child {
+            display: grid;
+            gap: 3px;
+        }
+
+        .order-id {
+            color: var(--navy-900);
+            font-family: var(--font-display);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .orders-table td small {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .align-right {
+            text-align: right;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            min-height: 25px;
+            align-items: center;
+            padding: 0 9px;
+            border-radius: 999px;
+            background: #EEF2F5;
+            color: #667789;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .status-completed {
+            background: var(--green-100);
+            color: var(--green-700);
+        }
+
+        .status-cancelled {
+            background: var(--red-100);
+            color: var(--red-600);
+        }
+
+        .status-pending {
+            background: var(--amber-100);
+            color: var(--amber-700);
+        }
+
+        .status-preparing {
+            background: var(--blue-100);
+            color: var(--blue-700);
+        }
+
+        .status-ready {
+            background: #E8F7F3;
+            color: #197A66;
+        }
+
+        .table-empty {
+            padding: 45px 15px !important;
+            text-align: center;
+        }
+
+        .table-empty .empty-icon {
+            display: flex;
+            margin: 0 auto 10px;
+        }
+
+        .table-empty strong,
+        .table-empty small {
+            display: block;
+        }
+
+        .table-empty strong {
+            color: var(--navy-900);
+            font-size: 13px;
+        }
+
+        .table-empty small {
+            margin-top: 4px;
+        }
+
+        .search-empty {
+            margin: 20px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .empty-state {
+            display: grid;
+            grid-column: 1 / -1;
+            justify-items: center;
+            padding: 44px 18px;
+            border: 1px dashed #C9D7E2;
+            border-radius: var(--radius-medium);
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .empty-icon {
+            display: inline-flex;
+            width: 52px;
+            height: 52px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            background: var(--green-100);
+            color: var(--green-700);
+        }
+
+        .empty-state h3 {
+            margin: 14px 0 5px;
+            color: var(--navy-900);
+            font-family: var(--font-display);
+            font-size: 18px;
+        }
+
+        .empty-state p {
+            margin: 0;
+            font-size: 12px;
+        }
+
+        .page-footer {
+            display: flex;
+            justify-content: center;
+            gap: 7px;
+            padding-top: 24px;
+            color: #8B99A5;
+            font-size: 11px;
+        }
+
+        .mobile-overlay {
+            display: none;
+        }
+
+        @media (max-width: 1160px) {
+            .qr-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 980px) {
+            .manager-sidebar {
+                width: 235px;
+            }
+
+            .manager-main {
+                margin-left: 235px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .actions-panel {
+                min-height: auto;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .manager-sidebar {
+                width: min(300px, 86vw);
+                transform: translateX(-105%);
+                transition: transform .25s ease;
+            }
+
+            .manager-sidebar.is-open {
+                transform: translateX(0);
+            }
+
+            .sidebar-close,
+            .menu-toggle {
+                display: inline-flex;
+            }
+
+            .manager-main {
+                margin-left: 0;
+            }
+
+            .topbar {
+                min-height: 76px;
+                padding: 15px 16px;
+            }
+
+            .topbar h1 {
+                font-size: 18px;
+            }
+
+            .profile-summary {
+                padding-left: 0;
+                border-left: 0;
+            }
+
+            .profile-summary > span:last-child {
+                display: none;
+            }
+
+            .content-wrap {
+                width: calc(100% - 32px);
+                padding-top: 28px;
+            }
+
+            .welcome-card {
+                min-height: 0;
+                align-items: start;
+                padding: 26px 22px;
+            }
+
+            .welcome-copy h2 {
+                font-size: 32px;
+            }
+
+            .welcome-illustration {
+                display: none;
+            }
+
+            .metric-grid {
+                gap: 10px;
+            }
+
+            .metric-card {
+                padding: 15px;
+            }
+
+            .metric-card-header span:first-child {
+                max-width: 70px;
+                font-size: 9px;
+            }
+
+            .metric-card > strong {
+                font-size: 21px;
+            }
+
+            .sales-panel,
+            .actions-panel,
+            .qr-panel,
+            .orders-panel {
+                padding: 17px;
+            }
+
+            .panel-header,
+            .orders-panel-header {
+                align-items: start;
+                flex-direction: column;
+            }
+
+            .panel-header .outline-button,
+            .orders-tools,
+            .order-search {
+                width: 100%;
+            }
+
+            .orders-tools {
+                flex-direction: column;
+            }
+
+            .orders-tools .outline-button {
+                width: 100%;
+            }
+
+            .sales-chart {
+                height: 185px;
+                gap: 8px;
+                padding-right: 9px;
+                padding-left: 9px;
+            }
+
+            .qr-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
+            }
+
+            .qr-actions {
+                flex-direction: column;
+            }
+
+            .page-footer {
+                flex-wrap: wrap;
+                text-align: center;
+            }
+
+            .mobile-overlay.is-visible {
+                position: fixed;
+                inset: 0;
+                z-index: 50;
+                display: block;
+                background: rgba(16, 27, 45, .48);
+            }
+        }
+
+        @media (max-width: 420px) {
+            .metric-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .metric-card-header span:first-child {
+                max-width: none;
+            }
+
+            .qr-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition-duration: .01ms !important;
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        (function () {
+            const sidebar = document.getElementById('managerSidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            const openButton = document.getElementById('sidebarOpen');
+            const closeButton = document.getElementById('sidebarClose');
+            const searchInput = document.getElementById('recentOrderSearch');
+            const orderRows = Array.from(document.querySelectorAll('[data-order-row]'));
+            const searchEmpty = document.getElementById('recentOrdersEmpty');
+            document.querySelectorAll('[data-chart-height]').forEach(function (bar) {
+                const height = Number.parseFloat(bar.dataset.chartHeight);
+                if (Number.isFinite(height)) {
+                    bar.style.height = `${Math.max(0, Math.min(height, 100))}%`;
+                }
+            });
+
+            function setSidebar(open) {
+                if (!sidebar || !overlay) {
+                    return;
+                }
+
+                sidebar.classList.toggle('is-open', open);
+                overlay.classList.toggle('is-visible', open);
+                document.body.classList.toggle('drawer-open', open);
+            }
+
+            if (openButton) {
+                openButton.addEventListener('click', function () {
+                    setSidebar(true);
+                });
+            }
+
+            if (closeButton) {
+                closeButton.addEventListener('click', function () {
+                    setSidebar(false);
+                });
+            }
+
+            if (overlay) {
+                overlay.addEventListener('click', function () {
+                    setSidebar(false);
+                });
+            }
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    setSidebar(false);
+                }
+            });
+
+            document.querySelectorAll('.manager-sidebar a').forEach(function (link) {
+                link.addEventListener('click', function () {
+                    setSidebar(false);
+                });
+            });
+
+            function filterOrders() {
+                const query = searchInput
+                    ? searchInput.value.trim().toLowerCase()
+                    : '';
+                let visibleCount = 0;
+
+                orderRows.forEach(function (row) {
+                    const matches = !query || row.dataset.orderSearch
+                        .toLowerCase()
+                        .includes(query);
+
+                    row.hidden = !matches;
+                    if (matches) {
+                        visibleCount += 1;
+                    }
+                });
+
+                if (searchEmpty) {
+                    searchEmpty.hidden = visibleCount !== 0 || orderRows.length === 0;
+                }
+            }
+
+            if (searchInput) {
+                searchInput.addEventListener('input', filterOrders);
+            }
+
+            function openPrintWindow(imageUrl, label) {
+                const popup = window.open('', '_blank', 'width=520,height=700');
+
+                if (!popup) {
+                    return;
+                }
+
+                popup.document.write(
+                    '<!doctype html>' +
+                    '<html><head><title>' + label + ' QR Code</title></head>' +
+                    '<body style="font-family:Arial,sans-serif;text-align:center;padding:28px">' +
+                    '<h1 style="font-size:28px;margin:0 0 20px">' + label + '</h1>' +
+                    '<img style="width:460px;max-width:90vw" src="' + imageUrl + '" alt="' + label + ' QR code">' +
+                    '<p style="font-size:16px;margin-top:20px">Scan to order from this table</p>' +
+                    '</body></html>'
+                );
+                popup.document.close();
+                popup.focus();
+                popup.print();
+            }
+
+            document.querySelectorAll('[data-print-qr]').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    openPrintWindow(
+                        button.dataset.imageUrl,
+                        button.dataset.tableLabel
+                    );
+                });
+            });
+        }());
+    </script>
+{% endblock %}

@@ -1,0 +1,1926 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Reception Dashboard
+{% endblock %}
+
+{% set order_counts = namespace(
+    pending=0,
+    preparing=0,
+    ready=0,
+    served=0,
+    active=0
+) %}
+
+{% for order in orders %}
+    {% set status = (order.status or 'pending') | lower %}
+
+    {% if status in ['placed', 'pending'] %}
+        {% set order_counts.pending = order_counts.pending + 1 %}
+    {% elif status == 'preparing' %}
+        {% set order_counts.preparing = order_counts.preparing + 1 %}
+    {% elif status == 'ready' %}
+        {% set order_counts.ready = order_counts.ready + 1 %}
+    {% elif status == 'served' %}
+        {% set order_counts.served = order_counts.served + 1 %}
+    {% endif %}
+
+    {% if status in ['placed', 'pending', 'preparing', 'ready', 'served'] %}
+        {% set order_counts.active = order_counts.active + 1 %}
+    {% endif %}
+{% endfor %}
+
+{% set pending_total = incoming_count | default(order_counts.pending, true) %}
+{% set preparing_total = preparing_count | default(order_counts.preparing, true) %}
+{% set ready_total = ready_count | default(order_counts.ready, true) %}
+{% set served_total = served_count | default(order_counts.served, true) %}
+
+{% macro icon(name, size=20) %}
+    {% if name == 'menu' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"
+        >
+            <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+    {% elif name == 'close' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"
+        >
+            <path d="m6 6 12 12M18 6 6 18" />
+        </svg>
+    {% elif name == 'grid' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+        </svg>
+    {% elif name == 'orders' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M6 3h12v18H6z" />
+            <path d="M9 8h6M9 12h6M9 16h4" />
+        </svg>
+    {% elif name == 'history' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.5" />
+            <path d="M4 4v4.5h4.5M12 7v5l3 2" />
+        </svg>
+    {% elif name == 'menu-book' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H12v17H6.5A2.5 2.5 0 0 0 4 22V5.5Z" />
+            <path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H12v17h5.5A2.5 2.5 0 0 1 20 22V5.5Z" />
+        </svg>
+    {% elif name == 'table' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M4 8h16M4 16h16M8 4v16M16 4v16" />
+            <rect x="4" y="4" width="16" height="16" rx="2" />
+        </svg>
+    {% elif name == 'search' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"
+        >
+            <circle cx="11" cy="11" r="6.5" />
+            <path d="m16 16 4 4" />
+        </svg>
+    {% elif name == 'bell' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+            <path d="M10 21h4" />
+        </svg>
+    {% elif name == 'clock' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"
+        >
+            <circle cx="12" cy="12" r="8.5" />
+            <path d="M12 7v5l3.5 2" />
+        </svg>
+    {% elif name == 'check' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="m5 12 4.2 4.2L19 6.5" />
+        </svg>
+    {% elif name == 'chef' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M7 10a4 4 0 1 1 2.5-7.1A4 4 0 0 1 17 6c0 .3 0 .7-.1 1A3.5 3.5 0 0 1 17 14H7a4 4 0 0 1 0-8" />
+            <path d="M8 14v7h8v-7M6 21h12" />
+        </svg>
+    {% elif name == 'logout' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M10 17l5-5-5-5M15 12H3M21 19V5a2 2 0 0 0-2-2h-6" />
+        </svg>
+    {% elif name == 'arrow' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M5 12h13M13 6l6 6-6 6" />
+        </svg>
+    {% elif name == 'refresh' %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M20 11a8 8 0 0 0-14.7-3.8L4 9" />
+            <path d="M4 4v5h5M4 13a8 8 0 0 0 14.7 3.8L20 15" />
+            <path d="M20 20v-5h-5" />
+        </svg>
+    {% else %}
+        <svg
+            width="{{ size }}"
+            height="{{ size }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"
+        >
+            <circle cx="12" cy="12" r="8.5" />
+        </svg>
+    {% endif %}
+{% endmacro %}
+
+{% block content %}
+    <div class="reception-app" id="receptionApp">
+        {% set reception_page = 'dashboard' %}
+        {% set reception_sidebar_id = 'receptionSidebar' %}
+        {% set reception_sidebar_class = 'reception-sidebar' %}
+        {% include "partials/receptionist_sidebar.html" %}
+
+        <div class="reception-main">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button
+                        class="icon-button menu-toggle"
+                        id="sidebarOpen"
+                        type="button"
+                        aria-label="Open navigation"
+                    >
+                        {{ icon('menu', 21) }}
+                    </button>
+
+                    <div>
+                        <span class="eyebrow">Front desk</span>
+                        <h1>Service overview</h1>
+                    </div>
+                </div>
+
+                <div class="topbar-actions">
+                    <label class="search-box">
+                        <span class="sr-only">Search orders</span>
+                        {{ icon('search', 18) }}
+                        <input
+                            id="orderSearch"
+                            type="search"
+                            placeholder="Search orders"
+                            autocomplete="off"
+                            aria-label="Search orders"
+                        >
+                    </label>
+
+                    <a
+                        class="notification-button"
+                        href="{{ url_for('receptionist.orders') }}"
+                        aria-label="Open order queue"
+                    >
+                        {{ icon('bell', 19) }}
+                        {% if pending_total|int > 0 %}
+                            <span class="notification-dot" aria-label="New orders waiting"></span>
+                        {% endif %}
+                    </a>
+
+                    <div class="profile-summary">
+                        <span class="profile-avatar">R</span>
+                        <span>
+                            <strong>Receptionist</strong>
+                            <small>Front-of-house</small>
+                        </span>
+                    </div>
+                </div>
+            </header>
+
+            <main class="content-wrap">
+                <section class="page-heading">
+                    <div>
+                        <span class="section-kicker">Live service desk</span>
+                        <h2>Keep every table moving.</h2>
+                        <p>Monitor incoming orders, coordinate service, and keep guests informed.</p>
+                    </div>
+
+                    <div class="service-status">
+                        <span class="status-pulse"></span>
+                        <span>Service online</span>
+                    </div>
+                </section>
+
+                <section class="metric-grid" aria-label="Order status summary">
+                    <article class="metric-card metric-pending">
+                        <div class="metric-header">
+                            <span>Pending</span>
+                            <span class="metric-icon">{{ icon('clock', 19) }}</span>
+                        </div>
+                        <strong data-pending-count>{{ pending_total }}</strong>
+                        <small>Waiting for preparation</small>
+                    </article>
+
+                    <article class="metric-card metric-preparing">
+                        <div class="metric-header">
+                            <span>Preparing</span>
+                            <span class="metric-icon">{{ icon('chef', 19) }}</span>
+                        </div>
+                        <strong data-preparing-count>{{ preparing_total }}</strong>
+                        <small>In the kitchen now</small>
+                    </article>
+
+                    <article class="metric-card metric-ready">
+                        <div class="metric-header">
+                            <span>Ready</span>
+                            <span class="metric-icon">{{ icon('check', 19) }}</span>
+                        </div>
+                        <strong data-ready-count>{{ ready_total }}</strong>
+                        <small>Waiting to be served</small>
+                    </article>
+
+                    <article class="metric-card metric-served">
+                        <div class="metric-header">
+                            <span>Served</span>
+                            <span class="metric-icon">{{ icon('orders', 19) }}</span>
+                        </div>
+                        <strong data-served-count>{{ served_total }}</strong>
+                        <small>Completed service</small>
+                    </article>
+                </section>
+
+                <section class="queue-section" id="orders">
+                    <div class="section-heading">
+                        <div>
+                            <span class="section-kicker">Action required</span>
+                            <h2>Recent orders</h2>
+                            <p>Orders requiring attention from the front desk.</p>
+                        </div>
+
+                        <a
+                            class="outline-button"
+                            href="{{ url_for('receptionist.orders') }}"
+                        >
+                            Open full queue
+                            {{ icon('arrow', 17) }}
+                        </a>
+                    </div>
+
+                    <div class="orders-grid" id="ordersGrid">
+                        {% for order in orders[:8] %}
+                            {% set status = (order.status or 'pending') | lower %}
+                            {% set table_label = order.table_name or ('Table ' ~ order.table_id) %}
+
+                            <article
+                                class="order-card"
+                                data-order-id="{{ order.id }}"
+                                data-order-search="{{ order.id }} {{ order.order_number }} {{ table_label }} {{ status }}"
+                            >
+                                <div class="order-card-header">
+                                    <div class="order-identity">
+                                        <span class="order-number">
+                                            #{{ order.order_number or order.id }}
+                                        </span>
+                                        <div>
+                                            <h3>
+                                                {% if status in ['placed', 'pending'] %}
+                                                    New order
+                                                {% else %}
+                                                    Order #{{ order.order_number or order.id }}
+                                                {% endif %}
+                                            </h3>
+                                            <p>{{ table_label }}</p>
+                                        </div>
+                                    </div>
+
+                                    {% if status in ['placed', 'pending'] %}
+                                        <span class="status-badge status-pending">Pending</span>
+                                    {% elif status == 'preparing' %}
+                                        <span class="status-badge status-preparing">Preparing</span>
+                                    {% elif status == 'ready' %}
+                                        <span class="status-badge status-ready">Ready</span>
+                                    {% elif status == 'served' %}
+                                        <span class="status-badge status-served">Served</span>
+                                    {% else %}
+                                        <span class="status-badge">{{ order.status | capitalize }}</span>
+                                    {% endif %}
+                                </div>
+
+                                <div class="order-meta">
+                                    <span>{{ icon('clock', 14) }} {{ order.created_at }}</span>
+                                    <strong>Rs. {{ "%.2f" | format((order.total or 0) | float) }}</strong>
+                                </div>
+
+                                <div class="order-items">
+                                    {% for item in order['items'][:3] %}
+                                        <span>
+                                            <strong>{{ item.quantity }}×</strong>
+                                            {{ item.name or 'Menu item' }}
+                                        </span>
+                                    {% endfor %}
+
+                                    {% if order['items'] | length > 3 %}
+                                        <span class="more-items">
+                                            +{{ order['items'] | length - 3 }} more items
+                                        </span>
+                                    {% endif %}
+                                </div>
+
+                                <a
+                                    class="card-action"
+                                    href="{{ url_for('receptionist.orders') }}"
+                                >
+                                    Manage order
+                                    {{ icon('arrow', 16) }}
+                                </a>
+                            </article>
+                        {% else %}
+                            <div class="empty-state">
+                                <span class="empty-icon">{{ icon('check', 26) }}</span>
+                                <h3>No orders in the queue</h3>
+                                <p>New customer orders will appear here automatically.</p>
+                                <a class="outline-button" href="{{ url_for('receptionist.orders') }}">
+                                    Open order queue
+                                    {{ icon('arrow', 17) }}
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <p class="search-empty" id="searchEmpty" hidden>
+                        No orders match your search.
+                    </p>
+                </section>
+
+                <section class="tables-section" id="tables">
+                    <div class="section-heading">
+                        <div>
+                            <span class="section-kicker">Front desk</span>
+                            <h2>Table overview</h2>
+                            <p>See which tables are available and which still need attention.</p>
+                        </div>
+                    </div>
+
+                    <div class="tables-grid">
+                        {% for table in tables %}
+                            {% set occupied = table.status == 'occupied' %}
+
+                            <article class="table-card{% if occupied %} is-occupied{% endif %}">
+                                <div class="table-card-header">
+                                    <span class="table-name">{{ table.name }}</span>
+                                    <span class="table-status-dot{% if occupied %} is-occupied{% endif %}"></span>
+                                </div>
+
+                                <div class="table-status">
+                                    <strong>
+                                        {{ 'Occupied' if occupied else 'Available' }}
+                                    </strong>
+                                    <span>
+                                        {{ 'Active service in progress' if occupied else 'Ready for a new order' }}
+                                    </span>
+                                </div>
+
+                                {% if occupied %}
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for('receptionist.clear_table', table_id=table.id) }}"
+                                        data-clear-table
+                                    >
+                                        <button class="clear-table-button" type="submit">
+                                            Clear table
+                                            {{ icon('check', 15) }}
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <span class="table-ready-label">Available now</span>
+                                {% endif %}
+                            </article>
+                        {% else %}
+                            <div class="empty-state">
+                                <span class="empty-icon">{{ icon('table', 26) }}</span>
+                                <h3>No tables configured</h3>
+                                <p>Add restaurant tables from the manager area.</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+
+                <section class="service-card">
+                    <div class="service-card-icon">{{ icon('bell', 22) }}</div>
+                    <div>
+                        <span class="section-kicker">Customer service</span>
+                        <h2>Need to review a full order?</h2>
+                        <p>Open the order queue to see every item, update statuses, and manage service from one place.</p>
+                    </div>
+                    <a class="outline-button" href="{{ url_for('receptionist.orders') }}">
+                        Go to order queue
+                        {{ icon('arrow', 17) }}
+                    </a>
+                </section>
+            </main>
+        </div>
+
+        <div class="mobile-overlay" id="mobileOverlay"></div>
+    </div>
+{% endblock %}
+
+{% block extra_css %}
+    <style>
+        @import url(
+            'https://fonts.googleapis.com/css2?family=Karla:wght@300;400;500;600;700&family=Playfair+Display+SC:wght@400;700&display=swap'
+        );
+
+        :root {
+            --navy-950: #101B2D;
+            --navy-900: #14213D;
+            --navy-800: #1B2A4A;
+            --blue-700: #2F5D8C;
+            --blue-100: #DCEAF7;
+            --orange-600: #D96F3D;
+            --orange-100: #FFF0E7;
+            --green-600: #2F9B67;
+            --green-100: #E7F7EE;
+            --amber-600: #B47716;
+            --amber-100: #FFF6DF;
+            --red-600: #C94E42;
+            --red-100: #FCEBE8;
+            --ink: #1D2C3E;
+            --muted: #68788A;
+            --background: #F5F8FB;
+            --surface: #FFFFFF;
+            --border: #DCE5EE;
+            --shadow-small: 0 8px 24px rgba(20, 33, 61, .06);
+            --shadow-medium: 0 18px 44px rgba(20, 33, 61, .10);
+            --radius-medium: 15px;
+            --radius-large: 22px;
+            --font-display: 'Playfair Display SC', Georgia, serif;
+            --font-body: 'Karla', system-ui, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: var(--background);
+            color: var(--ink);
+            font-family: var(--font-body);
+        }
+
+        body.drawer-open {
+            overflow: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        :is(a, button, input):focus-visible {
+            outline: 3px solid rgba(47, 93, 140, .35);
+            outline-offset: 3px;
+        }
+
+        .reception-app {
+            min-height: 100vh;
+            background: var(--background);
+        }
+
+        .reception-sidebar {
+            position: fixed;
+            inset: 0 auto 0 0;
+            z-index: 60;
+            display: flex;
+            width: 258px;
+            flex-direction: column;
+            padding: 27px 18px 20px;
+            background: var(--navy-900);
+            color: #FFF;
+            box-shadow: 12px 0 38px rgba(16, 27, 45, .14);
+        }
+
+        .sidebar-header,
+        .topbar,
+        .topbar-left,
+        .topbar-actions,
+        .profile-summary,
+        .order-card-header,
+        .order-identity,
+        .order-meta,
+        .table-card-header,
+        .service-card,
+        .metric-header,
+        .service-status,
+        .outline-button,
+        .card-action,
+        .clear-table-button,
+        .notification-button,
+        .search-box,
+        .icon-button {
+            display: flex;
+        }
+
+        .sidebar-header {
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .brand-lockup {
+            display: inline-flex;
+            min-width: 0;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .brand-mark {
+            display: inline-flex;
+            width: 43px;
+            height: 43px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 13px;
+            background: var(--orange-600);
+            color: #FFF;
+            font-family: var(--font-display);
+            font-size: 14px;
+            letter-spacing: .04em;
+        }
+
+        .brand-copy {
+            display: grid;
+            min-width: 0;
+            gap: 2px;
+        }
+
+        .brand-copy strong {
+            font-family: var(--font-display);
+            font-size: 16px;
+            white-space: nowrap;
+        }
+
+        .brand-copy small {
+            color: rgba(255, 255, 255, .56);
+            font-size: 11px;
+            letter-spacing: .04em;
+        }
+
+        .icon-button {
+            width: 42px;
+            height: 42px;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid transparent;
+            border-radius: 11px;
+            background: transparent;
+            color: currentColor;
+        }
+
+        .icon-button:hover {
+            border-color: rgba(255, 255, 255, .18);
+            background: rgba(255, 255, 255, .10);
+        }
+
+        .sidebar-close,
+        .menu-toggle {
+            display: none;
+        }
+
+        .sidebar-nav {
+            display: grid;
+            gap: 5px;
+            margin-top: 48px;
+        }
+
+        .nav-label {
+            padding: 0 12px 9px;
+            color: rgba(255, 255, 255, .38);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .17em;
+            text-transform: uppercase;
+        }
+
+        .nav-label-spaced {
+            margin-top: 28px;
+        }
+
+        .nav-link {
+            display: flex;
+            min-height: 48px;
+            align-items: center;
+            gap: 12px;
+            padding: 0 13px;
+            border: 1px solid transparent;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, .66);
+            font-size: 14px;
+            font-weight: 600;
+            transition: background .2s ease, color .2s ease, transform .2s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, .09);
+            color: #FFF;
+            transform: translateX(2px);
+        }
+
+        .nav-link.is-active {
+            background: var(--orange-600);
+            color: #FFF;
+            box-shadow: 0 8px 20px rgba(217, 111, 61, .20);
+        }
+
+        .nav-link svg {
+            flex: 0 0 auto;
+        }
+
+        .nav-badge {
+            display: inline-flex;
+            min-width: 22px;
+            height: 22px;
+            align-items: center;
+            justify-content: center;
+            margin-left: auto;
+            border-radius: 999px;
+            background: var(--red-600);
+            color: #FFF;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .nav-badge.is-empty {
+            opacity: .40;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255, 255, 255, .10);
+        }
+
+        .staff-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px;
+            border-radius: 13px;
+            background: rgba(255, 255, 255, .07);
+        }
+
+        .staff-card > span:last-child,
+        .profile-summary > span:last-child {
+            display: grid;
+            gap: 2px;
+        }
+
+        .staff-avatar,
+        .profile-avatar {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: 700;
+        }
+
+        .staff-avatar {
+            width: 37px;
+            height: 37px;
+            background: var(--orange-600);
+            color: #FFF;
+        }
+
+        .staff-card strong,
+        .profile-summary strong {
+            font-size: 12px;
+        }
+
+        .staff-card small,
+        .profile-summary small {
+            color: rgba(255, 255, 255, .44);
+            font-size: 10px;
+        }
+
+        .logout-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+            padding: 11px;
+            border-radius: 10px;
+            color: rgba(255, 255, 255, .48);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .logout-link:hover {
+            background: rgba(201, 78, 66, .12);
+            color: #F9B1A9;
+        }
+
+        .reception-main {
+            min-height: 100vh;
+            margin-left: 258px;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            min-height: 86px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            padding: 18px clamp(24px, 4vw, 58px);
+            border-bottom: 1px solid var(--border);
+            background: rgba(255, 255, 255, .90);
+            backdrop-filter: blur(16px);
+        }
+
+        .topbar-left {
+            align-items: center;
+            gap: 13px;
+        }
+
+        .topbar-left .icon-button {
+            color: var(--navy-900);
+        }
+
+        .eyebrow,
+        .section-kicker {
+            color: var(--orange-600);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+        }
+
+        .topbar h1 {
+            margin: 5px 0 0;
+            color: var(--navy-900);
+            font-family: var(--font-display);
+            font-size: 23px;
+            line-height: 1;
+        }
+
+        .topbar-actions {
+            align-items: center;
+            gap: 17px;
+        }
+
+        .search-box {
+            width: min(245px, 26vw);
+            min-height: 42px;
+            align-items: center;
+            gap: 9px;
+            padding: 0 13px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: var(--background);
+            color: #9AA8B5;
+        }
+
+        .search-box input {
+            width: 100%;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            color: var(--ink);
+            font-size: 13px;
+        }
+
+        .search-box input::placeholder {
+            color: #9AA8B5;
+        }
+
+        .notification-button {
+            position: relative;
+            width: 42px;
+            height: 42px;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: #FFF;
+            color: var(--navy-900);
+        }
+
+        .notification-button:hover {
+            border-color: var(--blue-700);
+            color: var(--blue-700);
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: 9px;
+            right: 9px;
+            width: 7px;
+            height: 7px;
+            border: 2px solid #FFF;
+            border-radius: 50%;
+            background: var(--red-600);
+        }
+
+        .profile-summary {
+            align-items: center;
+            gap: 9px;
+        }
+
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--navy-900);
+            color: #FFF;
+        }
+
+        .profile-summary strong {
+            color: var(--navy-900);
+        }
+
+        .profile-summary small {
+            color: #93A1AF;
+        }
+
+        .content-wrap {
+            width: min(1320px, calc(100% - 48px));
+            margin: 0 auto;
+            padding: 44px 0 64px;
+        }
+
+        .page-heading,
+        .section-heading {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .page-heading {
+            margin-bottom: 28px;
+        }
+
+        .page-heading h2,
+        .section-heading h2 {
+            margin: 8px 0 7px;
+            color: var(--navy-900);
+            font-family: var(--font-display);
+            line-height: 1;
+        }
+
+        .page-heading h2 {
+            font-size: clamp(32px, 4vw, 48px);
+        }
+
+        .section-heading h2 {
+            font-size: clamp(27px, 3vw, 36px);
+        }
+
+        .page-heading p,
+        .section-heading p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .service-status {
+            min-height: 36px;
+            align-items: center;
+            gap: 8px;
+            padding: 0 12px;
+            border: 1px solid #CBE8D6;
+            border-radius: 999px;
+            background: #F2FBF5;
+            color: #227549;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .status-pulse {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green-600);
+            box-shadow: 0 0 0 4px #DDF4E6;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 55px;
+        }
+
+        .metric-card {
+            padding: 19px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-medium);
+            background: var(--surface);
+            box-shadow: var(--shadow-small);
+        }
+
+        .metric-header {
+            align-items: center;
+            justify-content: space-between;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .07em;
+            text-transform: uppercase;
+        }
+
+        .metric-icon {
+            display: inline-flex;
+            width: 38px;
+            height: 38px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 11px;
+        }
+
+        .metric-card > strong {
+            display: block;
+            margin-top: 18px;
+            color: var(--navy-900);
+            font-size: 31px;
+            line-height: 1;
+        }
+
+        .metric-card > small {
+            display: block;
+            margin-top: 8px;
+            color: #8B99A8;
+            font-size: 11px;
+        }
+
+        .metric-pending .metric-icon {
+            background: var(--orange-100);
+            color: var(--orange-600);
+        }
+
+        .metric-preparing .metric-icon {
+            background: var(--blue-100);
+            color: var(--blue-700);
+        }
+
+        .metric-ready .metric-icon {
+            background: var(--green-100);
+            color: var(--green-600);
+        }
+
+        .metric-served .metric-icon {
+            background: #EEEAFE;
+            color: #6C57A7;
+        }
+
+        .queue-section,
+        .tables-section {
+            margin-bottom: 58px;
+        }
+
+        .section-heading {
+            align-items: center;
+            margin-bottom: 22px;
+        }
+
+        .outline-button {
+            min-height: 42px;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #FFF;
+            color: var(--navy-900);
+            font-size: 12px;
+            font-weight: 700;
+            transition: border-color .2s ease, background .2s ease, color .2s ease;
+        }
+
+        .outline-button:hover {
+            border-color: var(--blue-700);
+            background: var(--blue-100);
+            color: var(--blue-700);
+        }
+
+        .orders-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .order-card {
+            padding: 19px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-medium);
+            background: #FFF;
+            box-shadow: var(--shadow-small);
+            transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+        }
+
+        .order-card:hover {
+            border-color: #B7CFE3;
+            box-shadow: var(--shadow-medium);
+            transform: translateY(-2px);
+        }
+
+        .order-card-header {
+            align-items: start;
+            justify-content: space-between;
+            gap: 14px;
+        }
+
+        .order-identity {
+            min-width: 0;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .order-number {
+            display: inline-flex;
+            width: 42px;
+            height: 42px;
+            flex: 0 0 auto;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: var(--navy-900);
+            color: #FFF;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .order-identity h3 {
+            margin: 0;
+            overflow: hidden;
+            color: var(--navy-900);
+            font-size: 14px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .order-identity p {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            min-height: 26px;
+            flex: 0 0 auto;
+            align-items: center;
+            padding: 0 9px;
+            border-radius: 999px;
+            background: #EEF2F5;
+            color: #667789;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .status-pending {
+            background: var(--orange-100);
+            color: var(--orange-600);
+        }
+
+        .status-preparing {
+            background: var(--amber-100);
+            color: var(--amber-600);
+        }
+
+        .status-ready {
+            background: var(--green-100);
+            color: var(--green-600);
+        }
+
+        .status-served {
+            background: #EEEAFE;
+            color: #6C57A7;
+        }
+
+        .order-meta {
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            margin-top: 17px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .order-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .order-meta strong {
+            color: var(--navy-900);
+            font-size: 13px;
+        }
+
+        .order-items {
+            display: grid;
+            gap: 6px;
+            min-height: 63px;
+            margin-top: 14px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .order-items span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .order-items strong {
+            margin-right: 5px;
+            color: var(--navy-900);
+        }
+
+        .order-items .more-items {
+            color: var(--blue-700);
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .card-action {
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-top: 14px;
+            padding-top: 13px;
+            border-top: 1px solid var(--border);
+            color: var(--blue-700);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .card-action:hover {
+            color: var(--orange-600);
+        }
+
+        .tables-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 13px;
+        }
+
+        .table-card {
+            padding: 17px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-medium);
+            background: #FFF;
+            box-shadow: var(--shadow-small);
+        }
+
+        .table-card.is-occupied {
+            border-color: #F0D2C9;
+        }
+
+        .table-card-header {
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .table-name {
+            color: var(--navy-900);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .table-status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--green-600);
+            box-shadow: 0 0 0 4px var(--green-100);
+        }
+
+        .table-status-dot.is-occupied {
+            background: var(--orange-600);
+            box-shadow: 0 0 0 4px var(--orange-100);
+        }
+
+        .table-status {
+            display: grid;
+            gap: 3px;
+            margin: 21px 0 17px;
+        }
+
+        .table-status strong {
+            color: var(--navy-900);
+            font-size: 13px;
+        }
+
+        .table-status span {
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.4;
+        }
+
+        .clear-table-button {
+            width: 100%;
+            min-height: 36px;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border: 0;
+            border-radius: 9px;
+            background: var(--navy-900);
+            color: #FFF;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .clear-table-button:hover {
+            background: var(--blue-700);
+        }
+
+        .table-ready-label {
+            display: block;
+            min-height: 36px;
+            padding-top: 11px;
+            border-top: 1px solid var(--border);
+            color: var(--green-600);
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .service-card {
+            align-items: center;
+            gap: 17px;
+            padding: 22px;
+            border: 1px solid #F0D9B4;
+            border-radius: var(--radius-large);
+            background: linear-gradient(120deg, #FFF9EA, #FFFDF8);
+        }
+
+        .service-card-icon {
+            display: inline-flex;
+            width: 48px;
+            height: 48px;
+            flex: 0 0 auto;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            background: var(--amber-100);
+            color: var(--amber-600);
+        }
+
+        .service-card h2 {
+            margin: 5px 0 5px;
+            color: var(--navy-900);
+            font-family: var(--font-display);
+            font-size: 22px;
+        }
+
+        .service-card p {
+            max-width: 620px;
+            margin: 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .service-card .outline-button {
+            margin-left: auto;
+            flex: 0 0 auto;
+        }
+
+        .empty-state {
+            display: grid;
+            grid-column: 1 / -1;
+            justify-items: center;
+            padding: 47px 20px;
+            border: 1px dashed #C9D7E2;
+            border-radius: var(--radius-medium);
+            background: rgba(255, 255, 255, .65);
+            text-align: center;
+        }
+
+        .empty-icon {
+            display: inline-flex;
+            width: 54px;
+            height: 54px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 17px;
+            background: var(--green-100);
+            color: var(--green-600);
+        }
+
+        .empty-state h3 {
+            margin: 15px 0 5px;
+            color: var(--navy-900);
+            font-family: var(--font-display);
+            font-size: 21px;
+        }
+
+        .empty-state p {
+            margin: 0 0 16px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .search-empty {
+            margin: 22px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .mobile-overlay {
+            display: none;
+        }
+
+        @media (max-width: 1180px) {
+            .tables-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 980px) {
+            .reception-sidebar {
+                width: 235px;
+            }
+
+            .reception-main {
+                margin-left: 235px;
+            }
+
+            .metric-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .orders-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-summary {
+                display: none;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .reception-sidebar {
+                width: min(300px, 86vw);
+                transform: translateX(-105%);
+                transition: transform .25s ease;
+            }
+
+            .reception-sidebar.is-open {
+                transform: translateX(0);
+            }
+
+            .sidebar-close,
+            .menu-toggle {
+                display: inline-flex;
+            }
+
+            .reception-main {
+                margin-left: 0;
+            }
+
+            .topbar {
+                min-height: 76px;
+                padding: 15px 16px;
+            }
+
+            .topbar h1 {
+                font-size: 20px;
+            }
+
+            .topbar-actions {
+                gap: 8px;
+            }
+
+            .search-box {
+                display: none;
+            }
+
+            .notification-button {
+                width: 40px;
+                height: 40px;
+            }
+
+            .content-wrap {
+                width: calc(100% - 32px);
+                padding-top: 28px;
+            }
+
+            .page-heading,
+            .section-heading,
+            .service-card {
+                align-items: start;
+                flex-direction: column;
+            }
+
+            .page-heading h2 {
+                font-size: 38px;
+            }
+
+            .service-status {
+                align-self: start;
+            }
+
+            .metric-grid {
+                gap: 10px;
+                margin-bottom: 45px;
+            }
+
+            .metric-card {
+                padding: 15px;
+            }
+
+            .metric-card > strong {
+                font-size: 27px;
+            }
+
+            .section-heading h2 {
+                font-size: 31px;
+            }
+
+            .outline-button {
+                width: 100%;
+            }
+
+            .tables-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .service-card .outline-button {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .mobile-overlay.is-visible {
+                position: fixed;
+                inset: 0;
+                z-index: 50;
+                display: block;
+                background: rgba(16, 27, 45, .48);
+            }
+        }
+
+        @media (max-width: 430px) {
+            .metric-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .metric-header span:first-child {
+                max-width: 70px;
+                font-size: 9px;
+            }
+
+            .order-card {
+                padding: 15px;
+            }
+
+            .order-card-header {
+                gap: 8px;
+            }
+
+            .order-identity h3 {
+                max-width: 145px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition-duration: .01ms !important;
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        (function () {
+            const sidebar = document.getElementById('receptionSidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            const openButton = document.getElementById('sidebarOpen');
+            const closeButton = document.getElementById('sidebarClose');
+            const searchInput = document.getElementById('orderSearch');
+            let orderCards = Array.from(document.querySelectorAll('.order-card'));
+            const emptySearchState = document.getElementById('searchEmpty');
+            const pendingCountElements = document.querySelectorAll('[data-pending-count]');
+            const notificationsUrl = "{{ url_for('receptionist.notifications') }}";
+
+            function setSidebar(open) {
+                if (!sidebar || !overlay) {
+                    return;
+                }
+
+                sidebar.classList.toggle('is-open', open);
+                overlay.classList.toggle('is-visible', open);
+                document.body.classList.toggle('drawer-open', open);
+            }
+
+            if (openButton) {
+                openButton.addEventListener('click', function () {
+                    setSidebar(true);
+                });
+            }
+
+            if (closeButton) {
+                closeButton.addEventListener('click', function () {
+                    setSidebar(false);
+                });
+            }
+
+            if (overlay) {
+                overlay.addEventListener('click', function () {
+                    setSidebar(false);
+                });
+            }
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    setSidebar(false);
+                }
+            });
+
+            document.querySelectorAll('.reception-sidebar a').forEach(function (link) {
+                link.addEventListener('click', function () {
+                    setSidebar(false);
+                });
+            });
+
+            function filterOrders() {
+                const query = searchInput
+                    ? searchInput.value.trim().toLowerCase()
+                    : '';
+                let visibleCount = 0;
+
+                orderCards.forEach(function (card) {
+                    const matches = !query || card.dataset.orderSearch
+                        .toLowerCase()
+                        .includes(query);
+
+                    card.hidden = !matches;
+                    if (matches) {
+                        visibleCount += 1;
+                    }
+                });
+
+                if (emptySearchState) {
+                    emptySearchState.hidden = visibleCount !== 0 || orderCards.length === 0;
+                }
+            }
+
+            if (searchInput) {
+                searchInput.addEventListener('input', filterOrders);
+            }
+
+            function updatePendingCount(count) {
+                pendingCountElements.forEach(function (element) {
+                    element.textContent = count;
+                    element.classList.toggle('is-empty', count === 0);
+                });
+            }
+
+            function refreshNotifications() {
+                fetch(notificationsUrl, {
+                    headers: { Accept: 'application/json' },
+                    cache: 'no-store'
+                })
+                    .then(function (response) {
+                        return response.ok ? response.json() : null;
+                    })
+                    .then(function (data) {
+                        if (data && typeof data.count === 'number') {
+                            updatePendingCount(data.count);
+                        }
+                    })
+                    .catch(function () {
+                        // Live notification polling is progressive enhancement.
+                    });
+            }
+
+            refreshNotifications();
+            window.setInterval(refreshNotifications, 20000);
+        }());
+    </script>
+
+    <script>
+        (function () {
+            const grid = document.getElementById('ordersGrid');
+            const tablesGrid = document.querySelector('.tables-grid');
+            const liveEndpoint = '{{ url_for("receptionist.live_orders") }}';
+            const clearTableUrlTemplate = '{{ url_for("receptionist.clear_table", table_id=999999) }}';
+            let lastSignature = '';
+            let lastTablesSignature = '';
+            let busy = false;
+
+            function escapeHtml(value) {
+                return String(value || '').replace(/[&<>\"]/g, function (character) {
+                    return {
+                        '&': '&amp;',
+                        '<': '&lt;',
+                        '>': '&gt;',
+                        '\"': '&quot;'
+                    }[character];
+                });
+            }
+
+            function normalizeStatus(status) {
+                return ['Placed', 'pending'].includes(status)
+                    ? 'pending'
+                    : String(status || 'pending').toLowerCase();
+            }
+
+            function updateMetric(selector, value) {
+                const target = document.querySelector(selector);
+                if (target) target.textContent = value;
+            }
+
+            function renderDashboardOrder(order) {
+                const status = normalizeStatus(order.status);
+                const table = order.table_name || ('Table ' + order.table_id);
+                const items = order.items || [];
+                const itemText = items.slice(0, 3).map(function (item) {
+                    return '<span><strong>' + Number(item.quantity || 0) + '×</strong> ' +
+                        escapeHtml(item.name || 'Menu item') + '</span>';
+                }).join('');
+                const more = items.length > 3
+                    ? '<span class="more-items">+' + (items.length - 3) + ' more items</span>'
+                    : '';
+                const title = status === 'pending'
+                    ? 'New order'
+                    : 'Order #' + escapeHtml(order.order_number || order.id);
+                const label = status === 'ready' ? 'Ready' : status.charAt(0).toUpperCase() + status.slice(1);
+                return '<article class="order-card" data-order-id="' + Number(order.id) + '" data-order-search="' +
+                    Number(order.id) + ' ' + escapeHtml(order.order_number || '') + ' ' + escapeHtml(table) + ' ' + status + '">' +
+                    '<div class="order-card-header"><div class="order-identity"><span class="order-number">#' +
+                    escapeHtml(order.order_number || order.id) + '</span><div><h3>' + title + '</h3><p>' +
+                    escapeHtml(table) + '</p></div></div><span class="status-badge status-' + status + '">' + label + '</span></div>' +
+                    '<div class="order-meta"><span>◷ ' + escapeHtml(order.created_at) + '</span><strong>Rs. ' +
+                    Number(order.total || 0).toFixed(2) + '</strong></div><div class="order-items">' + itemText + more +
+                    '</div><a class="card-action" href="/receptionist/orders">Manage order →</a></article>';
+            }
+
+            function renderTableCard(table) {
+                const occupied = String(table.status || '').toLowerCase() === 'occupied';
+                const tableId = Number(table.id);
+                const tableName = escapeHtml(table.name || ('Table ' + tableId));
+                const clearUrl = clearTableUrlTemplate.replace('999999', String(tableId));
+                return '<article class="table-card' + (occupied ? ' is-occupied' : '') + '" data-table-id="' + tableId + '">' +
+                    '<div class="table-card-header"><span class="table-name">' + tableName + '</span>' +
+                    '<span class="table-status-dot' + (occupied ? ' is-occupied' : '') + '"></span></div>' +
+                    '<div class="table-status"><strong>' + (occupied ? 'Occupied' : 'Available') + '</strong>' +
+                    '<span>' + (occupied ? 'Active service in progress' : 'Ready for a new order') + '</span></div>' +
+                    (occupied
+                        ? '<form method="POST" action="' + clearUrl + '" data-clear-table><button class="clear-table-button" type="submit">Clear table ✓</button></form>'
+                        : '<span class="table-ready-label">Available now</span>') +
+                    '</article>';
+            }
+
+            function renderTables(tables) {
+                if (!tablesGrid) return;
+                tablesGrid.innerHTML = tables.length
+                    ? tables.map(renderTableCard).join('')
+                    : '<div class="empty-state"><h3>No tables configured</h3><p>Add restaurant tables from the manager area.</p></div>';
+            }
+
+            document.addEventListener('submit', function (event) {
+                const form = event.target.closest('[data-clear-table]');
+                if (!form) return;
+                event.preventDefault();
+                const button = form.querySelector('button');
+                if (button) button.disabled = true;
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: { Accept: 'application/json' }
+                }).then(function (response) {
+                    return response.ok ? response.json() : null;
+                }).then(function (data) {
+                    if (data && data.success) {
+                        refreshDashboard();
+                    } else if (button) {
+                        button.disabled = false;
+                    }
+                }).catch(function () {
+                    if (button) button.disabled = false;
+                });
+            });
+
+            function refreshDashboard() {
+                if (!grid || busy || document.hidden) return;
+                busy = true;
+                fetch(liveEndpoint, {
+                    headers: { Accept: 'application/json' },
+                    cache: 'no-store'
+                }).then(function (response) {
+                    return response.ok ? response.json() : null;
+                }).then(function (data) {
+                    if (!data) return;
+                    const orders = data.orders || [];
+                    const tables = data.tables || [];
+                    const counts = { pending: 0, preparing: 0, ready: 0, served: 0 };
+                    orders.forEach(function (order) {
+                        const status = normalizeStatus(order.status);
+                        if (Object.prototype.hasOwnProperty.call(counts, status)) counts[status] += 1;
+                    });
+                    updateMetric('[data-pending-count]', counts.pending);
+                    updateMetric('[data-preparing-count]', counts.preparing);
+                    updateMetric('[data-ready-count]', counts.ready);
+                    updateMetric('[data-served-count]', counts.served);
+                    const tablesSignature = JSON.stringify(tables.map(function (table) {
+                        return [table.id, table.status, table.current_order_id];
+                    }));
+                    if (tablesSignature !== lastTablesSignature) {
+                        renderTables(tables);
+                        lastTablesSignature = tablesSignature;
+                    }
+                    const signature = JSON.stringify(orders.map(function (order) {
+                        return [order.id, order.status, order.total, order.payment_status];
+                    }));
+                    if (signature !== lastSignature) {
+                        const recent = orders.slice(0, 8);
+                        grid.innerHTML = recent.length
+                            ? recent.map(renderDashboardOrder).join('')
+                            : '<div class="empty-state"><h3>No orders in the queue</h3><p>New customer orders will appear here automatically.</p></div>';
+                        orderCards = Array.from(document.querySelectorAll('.order-card'));
+                        filterOrders();
+                        lastSignature = signature;
+                    }
+                }).catch(function () {
+                    // Live updates are progressive enhancement; the page remains usable.
+                }).finally(function () {
+                    busy = false;
+                });
+            }
+
+            refreshDashboard();
+            window.setInterval(refreshDashboard, 5000);
+        }());
+    </script>
+{% endblock %}
